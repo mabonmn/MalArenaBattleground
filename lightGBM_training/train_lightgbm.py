@@ -64,7 +64,7 @@ class MalwareLightGBMTrainer:
     LightGBM trainer optimized for malware detection with competition constraints
     """
     
-    def __init__(self, data_dir: str = "ember2018"):
+    def __init__(self, data_dir: str = "../ember2018"):
         """
         Initialize the trainer
         
@@ -497,7 +497,7 @@ class MalwareLightGBMTrainer:
 
 def main():
     """Main training function with EMBER integration"""
-    data_directory = "ember2018"
+    data_directory = "../ember2018"
     
     if not os.path.exists(data_directory):
         logger.error(f"Data directory '{data_directory}' not found!")

@@ -10,7 +10,7 @@ from pathlib import Path
 def test_ember_vectorization():
     """Test EMBER vectorization step by step"""
     
-    data_dir = Path("ember2018")
+    data_dir = Path("../ember2018")
     
     try:
         import ember

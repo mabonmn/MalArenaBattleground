@@ -49,7 +49,7 @@ except ImportError:
 
 # Configure logging
 # Ensure Logs directory exists
-logs_dir = Path('/home/benchodbaap/DataAna/Logs')
+logs_dir = Path('../Logs')
 logs_dir.mkdir(exist_ok=True)
 
 logging.basicConfig(
@@ -68,7 +68,7 @@ class MalwareLightGBMTrainer:
     LightGBM trainer optimized for malware detection with competition constraints
     """
     
-    def __init__(self, data_dir: str = "ember2018"):
+    def __init__(self, data_dir: str = "../ember2018"):
         """
         Initialize the trainer
         
@@ -357,7 +357,7 @@ class MalwareLightGBMTrainer:
             raise ValueError("No model to save!")
         
         # Ensure models directory exists
-        models_dir = Path('/home/benchodbaap/DataAna/models')
+        models_dir = Path('../models')
         models_dir.mkdir(exist_ok=True)
         
         # Update paths to use models directory
@@ -514,7 +514,7 @@ class MalwareLightGBMTrainer:
 
 def main():
     """Main training function focused on 200-sample training"""
-    data_directory = "ember2018"
+    data_directory = "../ember2018"
     
     if not os.path.exists(data_directory):
         logger.error(f"Data directory '{data_directory}' not found!")

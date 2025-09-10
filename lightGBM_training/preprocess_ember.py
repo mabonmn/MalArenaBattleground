@@ -26,7 +26,7 @@ from pathlib import Path
 
 # Configure logging
 # Ensure Logs directory exists
-logs_dir = Path('/home/benchodbaap/DataAna/Logs')
+logs_dir = Path('../Logs')
 logs_dir.mkdir(exist_ok=True)
 
 logging.basicConfig(
@@ -291,7 +291,7 @@ class EmberPreprocessor:
 def main():
     """Main preprocessing function"""
     # Configuration
-    data_directory = "/home/benchodbaap/DataAna/ember2018"  # Adjust path as needed
+    data_directory = "../ember2018"  # Adjust path as needed
     sample_size = 200
     
     # Check if data directory exists
