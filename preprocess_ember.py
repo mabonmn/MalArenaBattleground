@@ -29,7 +29,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('preprocessing.log'),
+        logging.FileHandler('Logs/preprocessing.log'),
         logging.StreamHandler(sys.stdout)
     ]
 )
@@ -69,7 +69,7 @@ class EmberPreprocessor:
     
     def load_ember_features(self) -> Tuple[np.ndarray, np.ndarray]:
         """
-        Load and vectorize EMBER features from JSON files
+        Load and vectorize EMBER features using the ember library
         
         Returns:
             X: Feature matrix (n_samples, n_features)
@@ -80,18 +80,34 @@ class EmberPreprocessor:
         try:
             import ember
             
-            # Check if vectorized features already exist
-            vectorized_path = self.data_dir / "X_train.dat"
-            labels_path = self.data_dir / "y_train.dat"
+            # Check if vectorized features are complete (both files exist)
+            x_train_file = self.data_dir / "X_train.dat"
+            y_train_file = self.data_dir / "y_train.dat"
+            x_test_file = self.data_dir / "X_test.dat"
+            y_test_file = self.data_dir / "y_test.dat"
             
-            if not (vectorized_path.exists() and labels_path.exists()):
-                logger.info("Vectorizing raw EMBER features...")
-                ember.create_vectorized_features(str(self.data_dir))
+            all_vectorized_exist = (
+                x_train_file.exists() and y_train_file.exists() and
+                x_test_file.exists() and y_test_file.exists()
+            )
             
-            # Load vectorized features
+            if not all_vectorized_exist:
+                # Clean up any partial files from previous failed runs
+                for file_path in [x_train_file, y_train_file, x_test_file, y_test_file]:
+                    if file_path.exists():
+                        logger.info(f"Removing incomplete file: {file_path}")
+                        file_path.unlink()
+                
+                # Use ember's built-in vectorization function
+                logger.info("Creating vectorized features...")
+                ember.create_vectorized_features(self.data_dir)
+            else:
+                logger.info("Complete vectorized features found, loading existing files...")
+            
+            # Load vectorized features using ember's convenience function
             logger.info("Loading vectorized features...")
-            X_train, y_train, X_test, y_test = ember.read_vectorized_features(str(self.data_dir))
-            
+            X_train, y_train, X_test, y_test = ember.read_vectorized_features(self.data_dir)
+
             # Combine train and test for sampling
             X = np.vstack([X_train, X_test])
             y = np.hstack([y_train, y_test])
@@ -219,11 +235,11 @@ class EmberPreprocessor:
         
         # Save metadata
         metadata = {
-            'n_samples': X.shape[0],
-            'n_features': X.shape[1],
-            'n_malicious': np.sum(y == 1),
-            'n_benign': np.sum(y == 0),
-            'feature_dim': self.feature_dim
+            'n_samples': int(X.shape[0]),
+            'n_features': int(X.shape[1]),
+            'n_malicious': int(np.sum(y == 1)),
+            'n_benign': int(np.sum(y == 0)),
+            'feature_dim': int(self.feature_dim)
         }
         
         metadata_path = output_dir / f"metadata_{suffix}.json"
@@ -271,7 +287,7 @@ class EmberPreprocessor:
 def main():
     """Main preprocessing function"""
     # Configuration
-    data_directory = "ember2018"  # Adjust path as needed
+    data_directory = "/home/benchodbaap/DataAna/ember2018"  # Adjust path as needed
     sample_size = 200
     
     # Check if data directory exists

@@ -48,11 +48,15 @@ except ImportError:
     logger.warning("EMBER library not available. Some features will be disabled.")
 
 # Configure logging
+# Ensure Logs directory exists
+logs_dir = Path('/home/benchodbaap/DataAna/Logs')
+logs_dir.mkdir(exist_ok=True)
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('training.log'),
+        logging.FileHandler(logs_dir / 'training.log'),
         logging.StreamHandler(sys.stdout)
     ]
 )
@@ -93,7 +97,7 @@ class MalwareLightGBMTrainer:
     
     def load_preprocessed_data(self, dataset_type: str = "sample") -> Tuple[np.ndarray, np.ndarray]:
         """
-        Load preprocessed data
+        Load preprocessed data from npz files
         
         Args:
             dataset_type: Type of dataset to load ("sample" or "full")
@@ -104,23 +108,26 @@ class MalwareLightGBMTrainer:
         """
         logger.info(f"Loading {dataset_type} dataset...")
         
-        X_path = self.data_dir / f"X_{dataset_type}.npz"
-        y_path = self.data_dir / f"y_{dataset_type}.npz"
-        metadata_path = self.data_dir / f"metadata_{dataset_type}.json"
+        preprocessed_dir = self.data_dir / "preprocessed"
+        X_path = preprocessed_dir / f"X_{dataset_type}.npz"
+        y_path = preprocessed_dir / f"y_{dataset_type}.npz"
+        metadata_path = preprocessed_dir / f"metadata_{dataset_type}.json"
         
-        if not all(p.exists() for p in [X_path, y_path, metadata_path]):
-            raise FileNotFoundError(f"Preprocessed {dataset_type} data not found in {self.data_dir}")
+        if not X_path.exists() or not y_path.exists():
+            raise FileNotFoundError(f"Preprocessed data not found: {X_path} or {y_path}")
         
-        # Load data
+        # Load data from npz files
         X = np.load(X_path)['X']
         y = np.load(y_path)['y']
         
-        # Load metadata
-        with open(metadata_path, 'r') as f:
-            metadata = json.load(f)
+        logger.info(f"Loaded {X.shape[0]} samples with {X.shape[1]} features")
+        logger.info(f"Class distribution - Malicious: {np.sum(y == 1)}, Benign: {np.sum(y == 0)}")
         
-        logger.info(f"Loaded {metadata['n_samples']} samples with {metadata['n_features']} features")
-        logger.info(f"Class distribution - Malicious: {metadata['n_malicious']}, Benign: {metadata['n_benign']}")
+        # Load metadata if available
+        if metadata_path.exists():
+            with open(metadata_path, 'r') as f:
+                metadata = json.load(f)
+            logger.info(f"Metadata loaded: {metadata}")
         
         return X, y
     
@@ -349,6 +356,14 @@ class MalwareLightGBMTrainer:
         if self.model is None:
             raise ValueError("No model to save!")
         
+        # Ensure models directory exists
+        models_dir = Path('/home/benchodbaap/DataAna/models')
+        models_dir.mkdir(exist_ok=True)
+        
+        # Update paths to use models directory
+        model_path = models_dir / model_path
+        results_path = models_dir / results_path
+        
         # Save model
         with open(model_path, 'wb') as f:
             pickle.dump({
@@ -360,8 +375,8 @@ class MalwareLightGBMTrainer:
         logger.info(f"Model saved to {model_path}")
         
         # Save LightGBM native format for faster loading
-        lgb_model_path = model_path.replace('.pkl', '.txt')
-        self.model.save_model(lgb_model_path)
+        lgb_model_path = model_path.with_suffix('.txt')
+        self.model.save_model(str(lgb_model_path))
         logger.info(f"LightGBM model saved to {lgb_model_path}")
     
     def cross_validate(self, X: np.ndarray, y: np.ndarray, cv_folds: int = 5) -> Dict[str, Any]:
@@ -404,8 +419,10 @@ class MalwareLightGBMTrainer:
                 train_data,
                 valid_sets=[val_data],
                 num_boost_round=500,
-                callbacks=[lgb.early_stopping(stopping_rounds=30)],
-                verbose_eval=False
+                callbacks=[
+                    lgb.early_stopping(stopping_rounds=30),
+                    lgb.log_evaluation(period=0)  # 0 means no logging
+                ]
             )
             
             # Evaluate fold
@@ -496,37 +513,55 @@ class MalwareLightGBMTrainer:
 
 
 def main():
-    """Main training function with EMBER integration"""
+    """Main training function focused on 200-sample training"""
     data_directory = "ember2018"
     
     if not os.path.exists(data_directory):
         logger.error(f"Data directory '{data_directory}' not found!")
         sys.exit(1)
     
+    # Check for preprocessed sample data
+    preprocessed_dir = f"{data_directory}/preprocessed"
+    sample_X_path = f"{preprocessed_dir}/X_sample.npz"
+    sample_y_path = f"{preprocessed_dir}/y_sample.npz"
+    
+    if not os.path.exists(sample_X_path) or not os.path.exists(sample_y_path):
+        logger.error(f"Sample data not found at {sample_X_path} or {sample_y_path}")
+        logger.error("Please run preprocess_ember.py first to create sample data")
+        sys.exit(1)
+    
     trainer = MalwareLightGBMTrainer(data_directory)
     
     try:
-        if EMBER_AVAILABLE:
-            # Option 1: Use EMBER's built-in training (recommended for quick start)
-            logger.info("Using EMBER's built-in training...")
-            results = trainer.train_with_ember_defaults()
-            
-            # Option 2: Use custom training with EMBER data loading
-            # logger.info("Using custom training...")
-            # results = trainer.quick_train_and_evaluate()
-            
-        else:
-            # Fallback to preprocessed data if EMBER is not available
-            logger.info("EMBER not available, using preprocessed data...")
-            preprocessed_dir = f"{data_directory}/preprocessed"
-            if not os.path.exists(preprocessed_dir):
-                logger.error(f"Preprocessed data directory '{preprocessed_dir}' not found!")
-                logger.error("Please run preprocess_ember.py first or install EMBER library")
-                sys.exit(1)
-            
-            trainer = MalwareLightGBMTrainer(preprocessed_dir)
-            X, y = trainer.load_preprocessed_data("sample")
-            results = trainer.train_model(X, y)
+        logger.info("=== Training on 200-sample dataset ===")
+        
+        # Load the preprocessed sample data
+        logger.info("Loading preprocessed sample data...")
+        X_data, y_data = trainer.load_preprocessed_data("sample")
+        
+        logger.info(f"Loaded sample data: {X_data.shape[0]} samples, {X_data.shape[1]} features")
+        logger.info(f"Class distribution - Malicious: {np.sum(y_data == 1)}, Benign: {np.sum(y_data == 0)}")
+        
+        # Train the model on sample data
+        logger.info("Training LightGBM model on sample data...")
+        results = trainer.train_model(X_data, y_data, test_size=0.3)  # Use 30% for validation
+        
+        # Perform cross-validation for robustness assessment
+        logger.info("Performing cross-validation...")
+        cv_results = trainer.cross_validate(X_data, y_data, cv_folds=5)
+        
+        # Save the trained model
+        model_name = "malware_lightgbm_200sample_model.pkl"
+        trainer.save_model(model_path=model_name, results_path="training_results_200sample.json")
+        
+        # Log final results
+        logger.info("=== Training Summary ===")
+        logger.info(f"Training completed on {X_data.shape[0]} samples")
+        logger.info(f"Model saved as: {model_name}")
+        logger.info(f"Final Accuracy: {results.get('accuracy', 'N/A'):.4f}")
+        logger.info(f"Final TPR: {results.get('tpr', 'N/A'):.4f}")
+        logger.info(f"Final FPR: {results.get('fpr', 'N/A'):.4f}")
+        logger.info(f"CV Accuracy: {cv_results.get('accuracy_mean', 'N/A'):.4f} ± {cv_results.get('accuracy_std', 'N/A'):.4f}")
         
         logger.info("Training completed successfully!")
         
