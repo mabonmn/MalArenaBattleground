@@ -25,11 +25,15 @@ import logging
 from pathlib import Path
 
 # Configure logging
+# Ensure Logs directory exists
+logs_dir = Path('/home/benchodbaap/DataAna/Logs')
+logs_dir.mkdir(exist_ok=True)
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('Logs/preprocessing.log'),
+        logging.FileHandler(logs_dir / 'preprocessing.log'),
         logging.StreamHandler(sys.stdout)
     ]
 )
