@@ -145,13 +145,13 @@ class MalwareLightGBMTrainer:
             'verbosity': 1,
             
             # Performance optimization for competition constraints
-            'num_leaves': 31,  # Default, good balance
-            'max_depth': -1,   # No limit
-            'learning_rate': 0.1,
-            'feature_fraction': 0.9,
+            'num_leaves': 63,  # Increased from 31 for more complexity
+            'max_depth': 8,    # Limited depth to prevent overfitting
+            'learning_rate': 0.05,  # Reduced for better convergence
+            'feature_fraction': 0.8,  # Slightly reduced for regularization
             'bagging_fraction': 0.8,
             'bagging_freq': 5,
-            'min_data_in_leaf': 50,  # Increased for better generalization
+            'min_data_in_leaf': 10,  # Reduced from 50 to allow more splits with small dataset
             
             # Memory optimization
             'max_bin': 255,
@@ -162,13 +162,13 @@ class MalwareLightGBMTrainer:
             'force_col_wise': True,
             
             # Regularization to prevent overfitting
-            'lambda_l1': 0.1,
-            'lambda_l2': 0.1,
-            'min_gain_to_split': 0.0,
+            'lambda_l1': 0.5,  # Increased regularization
+            'lambda_l2': 0.5,
+            'min_gain_to_split': 0.01,  # Small threshold to reduce noise
             
             # For binary classification
-            'is_unbalance': False,  # We'll handle class weights separately if needed
-            'scale_pos_weight': 1.0,
+            'is_unbalance': False,
+            'scale_pos_weight': 1.0,  # Keep balanced
         }
         
         return params
@@ -195,9 +195,16 @@ class MalwareLightGBMTrainer:
         logger.info(f"Training set: {X_train.shape[0]} samples")
         logger.info(f"Validation set: {X_val.shape[0]} samples")
         
+        # Feature scaling
+        self.scaler = StandardScaler()
+        X_train_scaled = self.scaler.fit_transform(X_train)
+        X_val_scaled = self.scaler.transform(X_val)
+        
+        logger.info("Applied StandardScaler to features")
+        
         # Prepare datasets for LightGBM
-        train_data = lgb.Dataset(X_train, label=y_train)
-        valid_data = lgb.Dataset(X_val, label=y_val, reference=train_data)
+        train_data = lgb.Dataset(X_train_scaled, label=y_train)
+        valid_data = lgb.Dataset(X_val_scaled, label=y_val, reference=train_data)
         
         # Get optimized parameters
         params = self.get_optimized_lgb_params()
@@ -210,10 +217,10 @@ class MalwareLightGBMTrainer:
             params,
             train_data,
             valid_sets=[valid_data],
-            num_boost_round=1000,
+            num_boost_round=2000,  # Increased for lower learning rate
             callbacks=[
-                lgb.early_stopping(stopping_rounds=50),
-                lgb.log_evaluation(period=100)
+                lgb.early_stopping(stopping_rounds=100),  # More patience
+                lgb.log_evaluation(period=200)
             ]
         )
         
@@ -221,7 +228,7 @@ class MalwareLightGBMTrainer:
         logger.info(f"Training completed in {training_time:.2f} seconds")
         
         # Evaluate model
-        results = self.evaluate_model(X_val, y_val)
+        results = self.evaluate_model(X_val_scaled, y_val)
         results['training_time'] = training_time
         results['model_size_mb'] = sys.getsizeof(pickle.dumps(self.model)) / (1024 * 1024)
         
@@ -303,6 +310,39 @@ class MalwareLightGBMTrainer:
         
         return results
     
+    def select_important_features(self, X: np.ndarray, y: np.ndarray, n_features: int = 500) -> np.ndarray:
+        """
+        Select top n most important features using a quick LightGBM model
+        
+        Args:
+            X: Feature matrix
+            y: Labels
+            n_features: Number of top features to select
+        
+        Returns:
+            Indices of selected features
+        """
+        logger.info(f"Selecting top {n_features} features...")
+        
+        # Quick training for feature importance
+        quick_params = {
+            'objective': 'binary',
+            'verbosity': -1,
+            'num_leaves': 31,
+            'learning_rate': 0.1,
+            'n_estimators': 100
+        }
+        
+        quick_model = lgb.LGBMClassifier(**quick_params)
+        quick_model.fit(X, y)
+        
+        # Get feature importance
+        importance = quick_model.feature_importances_
+        top_indices = np.argsort(importance)[-n_features:]
+        
+        logger.info(f"Selected {len(top_indices)} features with highest importance")
+        return top_indices
+    
     def find_optimal_threshold(self, y_true: np.ndarray, y_pred_proba: np.ndarray) -> float:
         """
         Find optimal threshold balancing TPR ≥ 95% and FPR ≤ 1%
@@ -368,7 +408,8 @@ class MalwareLightGBMTrainer:
         with open(model_path, 'wb') as f:
             pickle.dump({
                 'model': self.model,
-                'feature_dim': 2381,
+                'scaler': self.scaler,
+                'feature_dim': X_data.shape[1] if 'X_data' in locals() else 2381,
                 'model_type': 'lightgbm'
             }, f)
         
@@ -409,9 +450,14 @@ class MalwareLightGBMTrainer:
             X_train_fold, X_val_fold = X[train_idx], X[val_idx]
             y_train_fold, y_val_fold = y[train_idx], y[val_idx]
             
+            # Apply scaling per fold
+            scaler_fold = StandardScaler()
+            X_train_fold_scaled = scaler_fold.fit_transform(X_train_fold)
+            X_val_fold_scaled = scaler_fold.transform(X_val_fold)
+            
             # Create LightGBM datasets
-            train_data = lgb.Dataset(X_train_fold, label=y_train_fold)
-            val_data = lgb.Dataset(X_val_fold, label=y_val_fold, reference=train_data)
+            train_data = lgb.Dataset(X_train_fold_scaled, label=y_train_fold)
+            val_data = lgb.Dataset(X_val_fold_scaled, label=y_val_fold, reference=train_data)
             
             # Train model
             fold_model = lgb.train(
@@ -426,7 +472,7 @@ class MalwareLightGBMTrainer:
             )
             
             # Evaluate fold
-            y_pred_proba = fold_model.predict(X_val_fold, num_iteration=fold_model.best_iteration)
+            y_pred_proba = fold_model.predict(X_val_fold_scaled, num_iteration=fold_model.best_iteration)
             optimal_threshold = self.find_optimal_threshold(y_val_fold, y_pred_proba)
             y_pred = (y_pred_proba >= optimal_threshold).astype(int)
             
@@ -541,6 +587,12 @@ def main():
         
         logger.info(f"Loaded sample data: {X_data.shape[0]} samples, {X_data.shape[1]} features")
         logger.info(f"Class distribution - Malicious: {np.sum(y_data == 1)}, Benign: {np.sum(y_data == 0)}")
+        
+        # Feature selection to reduce noise
+        if X_data.shape[1] > 500:  # Only if we have more than 500 features
+            top_features = trainer.select_important_features(X_data, y_data, n_features=500)
+            X_data = X_data[:, top_features]
+            logger.info(f"Reduced features to {X_data.shape[1]} most important features")
         
         # Train the model on sample data
         logger.info("Training LightGBM model on sample data...")

@@ -1,0 +1,327 @@
+2025-09-09 21:39:08,751 - INFO - Initialized LightGBM trainer for malware detection
+2025-09-09 21:39:08,751 - INFO - Available RAM: 27.29 GB
+2025-09-09 21:39:08,751 - INFO - Available RAM: 23.60 GB
+2025-09-09 21:39:08,751 - INFO - CPU cores: 12
+2025-09-09 21:39:08,751 - INFO - Using EMBER's built-in training...
+2025-09-09 21:39:08,751 - INFO - Training model using EMBER's built-in training...
+2025-09-09 21:39:08,752 - ERROR - EMBER training failed: [Errno 2] No such file or directory: './y_train.dat'
+2025-09-09 21:39:08,752 - ERROR - Training failed: [Errno 2] No such file or directory: './y_train.dat'
+2025-09-09 21:39:49,488 - INFO - Initialized LightGBM trainer for malware detection
+2025-09-09 21:39:49,488 - INFO - Available RAM: 27.29 GB
+2025-09-09 21:39:49,488 - INFO - Available RAM: 23.52 GB
+2025-09-09 21:39:49,488 - INFO - CPU cores: 12
+2025-09-09 21:39:49,488 - INFO - Using EMBER's built-in training...
+2025-09-09 21:39:49,488 - INFO - Training model using EMBER's built-in training...
+2025-09-09 21:39:49,489 - ERROR - EMBER training failed: [Errno 2] No such file or directory: './y_train.dat'
+2025-09-09 21:39:49,489 - ERROR - Training failed: [Errno 2] No such file or directory: './y_train.dat'
+2025-09-09 21:42:30,859 - INFO - Initialized LightGBM trainer for malware detection
+2025-09-09 21:42:30,860 - INFO - Available RAM: 27.29 GB
+2025-09-09 21:42:30,860 - INFO - Available RAM: 23.25 GB
+2025-09-09 21:42:30,860 - INFO - CPU cores: 12
+2025-09-09 21:42:30,860 - INFO - Using EMBER's built-in training...
+2025-09-09 21:42:30,860 - INFO - Training model using EMBER's built-in training...
+2025-09-10 00:04:13,411 - INFO - Initialized LightGBM trainer for malware detection
+2025-09-10 00:04:13,411 - INFO - Available RAM: 27.29 GB
+2025-09-10 00:04:13,411 - INFO - Available RAM: 24.88 GB
+2025-09-10 00:04:13,411 - INFO - CPU cores: 12
+2025-09-10 00:04:13,411 - INFO - === Training on 200-sample dataset ===
+2025-09-10 00:04:13,411 - INFO - Loading preprocessed sample data...
+2025-09-10 00:04:13,411 - INFO - Loading sample dataset...
+2025-09-10 00:04:13,417 - INFO - Loaded 200 samples with 2381 features
+2025-09-10 00:04:13,417 - INFO - Class distribution - Malicious: 100, Benign: 100
+2025-09-10 00:04:13,417 - INFO - Metadata loaded: {'n_samples': 200, 'n_features': 2381, 'n_malicious': 100, 'n_benign': 100, 'feature_dim': 2381}
+2025-09-10 00:04:13,417 - INFO - Loaded sample data: 200 samples, 2381 features
+2025-09-10 00:04:13,417 - INFO - Class distribution - Malicious: 100, Benign: 100
+2025-09-10 00:04:13,417 - INFO - Training LightGBM model on sample data...
+2025-09-10 00:04:13,417 - INFO - Starting model training...
+2025-09-10 00:04:13,419 - INFO - Training set: 140 samples
+2025-09-10 00:04:13,419 - INFO - Validation set: 60 samples
+2025-09-10 00:04:13,419 - INFO - Training with parameters: {'objective': 'binary', 'metric': ['binary_logloss', 'auc'], 'boosting_type': 'gbdt', 'verbosity': 1, 'num_leaves': 31, 'max_depth': -1, 'learning_rate': 0.1, 'feature_fraction': 0.9, 'bagging_fraction': 0.8, 'bagging_freq': 5, 'min_data_in_leaf': 50, 'max_bin': 255, 'data_sample_strategy': 'bagging', 'num_threads': 4, 'force_col_wise': True, 'lambda_l1': 0.1, 'lambda_l2': 0.1, 'min_gain_to_split': 0.0, 'is_unbalance': False, 'scale_pos_weight': 1.0}
+2025-09-10 00:04:13,452 - INFO - Training completed in 0.03 seconds
+2025-09-10 00:04:13,452 - INFO - Evaluating model performance...
+2025-09-10 00:04:13,454 - WARNING - Cannot achieve both TPR ≥ 95% AND FPR ≤ 1%
+2025-09-10 00:04:13,456 - INFO - === Model Performance ===
+2025-09-10 00:04:13,456 - INFO - Accuracy: 0.7833
+2025-09-10 00:04:13,456 - INFO - Precision: 0.7073
+2025-09-10 00:04:13,456 - INFO - TPR (Recall): 0.9667 ✓
+2025-09-10 00:04:13,456 - INFO - FPR: 0.4000 ✗
+2025-09-10 00:04:13,456 - INFO - AUC: 0.8111
+2025-09-10 00:04:13,456 - INFO - Optimal threshold: 0.3119
+2025-09-10 00:04:13,456 - INFO - Avg prediction time: 0.0000 seconds ✓
+2025-09-10 00:04:13,456 - INFO - Competition compliant: ✗ NO
+2025-09-10 00:04:13,457 - INFO - Model size: 0.08 MB
+2025-09-10 00:04:13,458 - INFO - Performing cross-validation...
+2025-09-10 00:04:13,458 - INFO - Performing 5-fold cross-validation...
+2025-09-10 00:04:13,458 - INFO - Training fold 1/5...
+2025-09-10 00:04:13,514 - WARNING - Cannot achieve both TPR ≥ 95% AND FPR ≤ 1%
+2025-09-10 00:04:13,515 - INFO - Training fold 2/5...
+2025-09-10 00:04:13,544 - WARNING - Cannot achieve both TPR ≥ 95% AND FPR ≤ 1%
+2025-09-10 00:04:13,545 - INFO - Training fold 3/5...
+2025-09-10 00:04:13,627 - WARNING - Cannot achieve both TPR ≥ 95% AND FPR ≤ 1%
+2025-09-10 00:04:13,628 - INFO - Training fold 4/5...
+2025-09-10 00:04:13,655 - WARNING - Cannot achieve both TPR ≥ 95% AND FPR ≤ 1%
+2025-09-10 00:04:13,695 - INFO - Training fold 5/5...
+2025-09-10 00:04:13,721 - WARNING - Cannot achieve both TPR ≥ 95% AND FPR ≤ 1%
+2025-09-10 00:04:13,722 - INFO - === Cross-Validation Results ===
+2025-09-10 00:04:13,723 - INFO - Accuracy: 0.7000 ± 0.1107
+2025-09-10 00:04:13,723 - INFO - TPR: 0.9800 ± 0.0245
+2025-09-10 00:04:13,723 - INFO - FPR: 0.5800 ± 0.2227
+2025-09-10 00:04:13,724 - INFO - Model saved to malware_lightgbm_200sample_model.pkl
+2025-09-10 00:04:13,724 - INFO - LightGBM model saved to malware_lightgbm_200sample_model.txt
+2025-09-10 00:04:13,725 - INFO - === Training Summary ===
+2025-09-10 00:04:13,725 - INFO - Training completed on 200 samples
+2025-09-10 00:04:13,725 - INFO - Model saved as: malware_lightgbm_200sample_model.pkl
+2025-09-10 00:04:13,725 - INFO - Final Accuracy: 0.7833
+2025-09-10 00:04:13,725 - INFO - Final TPR: 0.9667
+2025-09-10 00:04:13,725 - INFO - Final FPR: 0.4000
+2025-09-10 00:04:13,725 - INFO - CV Accuracy: 0.7000 ± 0.1107
+2025-09-10 00:04:13,725 - INFO - Training completed successfully!
+2025-09-10 00:08:12,047 - INFO - Initialized LightGBM trainer for malware detection
+2025-09-10 00:08:12,048 - INFO - Available RAM: 27.29 GB
+2025-09-10 00:08:12,048 - INFO - Available RAM: 24.97 GB
+2025-09-10 00:08:12,048 - INFO - CPU cores: 12
+2025-09-10 00:08:12,048 - INFO - === Training on 200-sample dataset ===
+2025-09-10 00:08:12,048 - INFO - Loading preprocessed sample data...
+2025-09-10 00:08:12,048 - INFO - Loading sample dataset...
+2025-09-10 00:08:12,054 - INFO - Loaded 200 samples with 2381 features
+2025-09-10 00:08:12,054 - INFO - Class distribution - Malicious: 100, Benign: 100
+2025-09-10 00:08:12,054 - INFO - Metadata loaded: {'n_samples': 200, 'n_features': 2381, 'n_malicious': 100, 'n_benign': 100, 'feature_dim': 2381}
+2025-09-10 00:08:12,054 - INFO - Loaded sample data: 200 samples, 2381 features
+2025-09-10 00:08:12,054 - INFO - Class distribution - Malicious: 100, Benign: 100
+2025-09-10 00:08:12,054 - INFO - Training LightGBM model on sample data...
+2025-09-10 00:08:12,054 - INFO - Starting model training...
+2025-09-10 00:08:12,055 - INFO - Training set: 140 samples
+2025-09-10 00:08:12,055 - INFO - Validation set: 60 samples
+2025-09-10 00:08:12,056 - INFO - Training with parameters: {'objective': 'binary', 'metric': ['binary_logloss', 'auc'], 'boosting_type': 'gbdt', 'verbosity': 1, 'num_leaves': 31, 'max_depth': -1, 'learning_rate': 0.1, 'feature_fraction': 0.9, 'bagging_fraction': 0.8, 'bagging_freq': 5, 'min_data_in_leaf': 50, 'max_bin': 255, 'data_sample_strategy': 'bagging', 'num_threads': 4, 'force_col_wise': True, 'lambda_l1': 0.1, 'lambda_l2': 0.1, 'min_gain_to_split': 0.0, 'is_unbalance': False, 'scale_pos_weight': 1.0}
+2025-09-10 00:08:12,089 - INFO - Training completed in 0.03 seconds
+2025-09-10 00:08:12,089 - INFO - Evaluating model performance...
+2025-09-10 00:08:12,091 - WARNING - Cannot achieve both TPR ≥ 95% AND FPR ≤ 1%
+2025-09-10 00:08:12,093 - INFO - === Model Performance ===
+2025-09-10 00:08:12,093 - INFO - Accuracy: 0.7833
+2025-09-10 00:08:12,093 - INFO - Precision: 0.7073
+2025-09-10 00:08:12,093 - INFO - TPR (Recall): 0.9667 ✓
+2025-09-10 00:08:12,093 - INFO - FPR: 0.4000 ✗
+2025-09-10 00:08:12,093 - INFO - AUC: 0.8111
+2025-09-10 00:08:12,094 - INFO - Optimal threshold: 0.3119
+2025-09-10 00:08:12,094 - INFO - Avg prediction time: 0.0000 seconds ✓
+2025-09-10 00:08:12,094 - INFO - Competition compliant: ✗ NO
+2025-09-10 00:08:12,098 - INFO - Model size: 0.08 MB
+2025-09-10 00:08:12,098 - INFO - Performing cross-validation...
+2025-09-10 00:08:12,098 - INFO - Performing 5-fold cross-validation...
+2025-09-10 00:08:12,099 - INFO - Training fold 1/5...
+2025-09-10 00:08:12,124 - WARNING - Cannot achieve both TPR ≥ 95% AND FPR ≤ 1%
+2025-09-10 00:08:12,126 - INFO - Training fold 2/5...
+2025-09-10 00:08:12,204 - WARNING - Cannot achieve both TPR ≥ 95% AND FPR ≤ 1%
+2025-09-10 00:08:12,205 - INFO - Training fold 3/5...
+2025-09-10 00:08:12,241 - WARNING - Cannot achieve both TPR ≥ 95% AND FPR ≤ 1%
+2025-09-10 00:08:12,295 - INFO - Training fold 4/5...
+2025-09-10 00:08:12,324 - WARNING - Cannot achieve both TPR ≥ 95% AND FPR ≤ 1%
+2025-09-10 00:08:12,325 - INFO - Training fold 5/5...
+2025-09-10 00:08:12,349 - WARNING - Cannot achieve both TPR ≥ 95% AND FPR ≤ 1%
+2025-09-10 00:08:12,350 - INFO - === Cross-Validation Results ===
+2025-09-10 00:08:12,350 - INFO - Accuracy: 0.7000 ± 0.1107
+2025-09-10 00:08:12,350 - INFO - TPR: 0.9800 ± 0.0245
+2025-09-10 00:08:12,350 - INFO - FPR: 0.5800 ± 0.2227
+2025-09-10 00:08:12,395 - INFO - Model saved to /home/benchodbaap/DataAna/models/malware_lightgbm_200sample_model.pkl
+2025-09-10 00:08:12,396 - INFO - LightGBM model saved to /home/benchodbaap/DataAna/models/malware_lightgbm_200sample_model.txt
+2025-09-10 00:08:12,396 - INFO - === Training Summary ===
+2025-09-10 00:08:12,396 - INFO - Training completed on 200 samples
+2025-09-10 00:08:12,396 - INFO - Model saved as: malware_lightgbm_200sample_model.pkl
+2025-09-10 00:08:12,396 - INFO - Final Accuracy: 0.7833
+2025-09-10 00:08:12,396 - INFO - Final TPR: 0.9667
+2025-09-10 00:08:12,396 - INFO - Final FPR: 0.4000
+2025-09-10 00:08:12,397 - INFO - CV Accuracy: 0.7000 ± 0.1107
+2025-09-10 00:08:12,397 - INFO - Training completed successfully!
+2025-09-10 17:00:26,376 - INFO - Initialized LightGBM trainer for malware detection
+2025-09-10 17:00:26,376 - INFO - Available RAM: 27.29 GB
+2025-09-10 17:00:26,376 - INFO - Available RAM: 0.73 GB
+2025-09-10 17:00:26,377 - INFO - CPU cores: 12
+2025-09-10 17:00:26,377 - INFO - === Training on 200-sample dataset ===
+2025-09-10 17:00:26,377 - INFO - Loading preprocessed sample data...
+2025-09-10 17:00:26,377 - INFO - Loading sample dataset...
+2025-09-10 17:00:26,388 - INFO - Loaded 200 samples with 2381 features
+2025-09-10 17:00:26,388 - INFO - Class distribution - Malicious: 100, Benign: 100
+2025-09-10 17:00:26,389 - INFO - Metadata loaded: {'n_samples': 200, 'n_features': 2381, 'n_malicious': 100, 'n_benign': 100, 'feature_dim': 2381}
+2025-09-10 17:00:26,389 - INFO - Loaded sample data: 200 samples, 2381 features
+2025-09-10 17:00:26,389 - INFO - Class distribution - Malicious: 100, Benign: 100
+2025-09-10 17:00:26,389 - INFO - Selecting top 500 features...
+2025-09-10 17:00:29,115 - INFO - Selected 500 features with highest importance
+2025-09-10 17:00:29,116 - INFO - Reduced features to 500 most important features
+2025-09-10 17:00:29,116 - INFO - Training LightGBM model on sample data...
+2025-09-10 17:00:29,116 - INFO - Starting model training...
+2025-09-10 17:00:29,118 - INFO - Training set: 140 samples
+2025-09-10 17:00:29,119 - INFO - Validation set: 60 samples
+2025-09-10 17:00:29,121 - INFO - Applied StandardScaler to features
+2025-09-10 17:00:29,121 - INFO - Training with parameters: {'objective': 'binary', 'metric': ['binary_logloss', 'auc'], 'boosting_type': 'gbdt', 'verbosity': 1, 'num_leaves': 63, 'max_depth': 8, 'learning_rate': 0.05, 'feature_fraction': 0.8, 'bagging_fraction': 0.8, 'bagging_freq': 5, 'min_data_in_leaf': 10, 'max_bin': 255, 'data_sample_strategy': 'bagging', 'num_threads': 4, 'force_col_wise': True, 'lambda_l1': 0.5, 'lambda_l2': 0.5, 'min_gain_to_split': 0.01, 'is_unbalance': False, 'scale_pos_weight': 1.0}
+2025-09-10 17:00:39,882 - INFO - Training completed in 10.76 seconds
+2025-09-10 17:00:39,882 - INFO - Evaluating model performance...
+2025-09-10 17:00:39,906 - WARNING - Cannot achieve both TPR ≥ 95% AND FPR ≤ 1%
+2025-09-10 17:00:39,920 - INFO - === Model Performance ===
+2025-09-10 17:00:39,921 - INFO - Accuracy: 0.7500
+2025-09-10 17:00:39,921 - INFO - Precision: 0.6744
+2025-09-10 17:00:39,921 - INFO - TPR (Recall): 0.9667 ✓
+2025-09-10 17:00:39,921 - INFO - FPR: 0.4667 ✗
+2025-09-10 17:00:39,921 - INFO - AUC: 0.8411
+2025-09-10 17:00:39,921 - INFO - Optimal threshold: 0.1893
+2025-09-10 17:00:39,921 - INFO - Avg prediction time: 0.0004 seconds ✓
+2025-09-10 17:00:39,921 - INFO - Competition compliant: ✗ NO
+2025-09-10 17:00:39,938 - INFO - Model size: 0.07 MB
+2025-09-10 17:00:39,938 - INFO - Performing cross-validation...
+2025-09-10 17:00:39,939 - INFO - Performing 5-fold cross-validation...
+2025-09-10 17:00:39,939 - INFO - Training fold 1/5...
+2025-09-10 17:00:40,076 - WARNING - Cannot achieve both TPR ≥ 95% AND FPR ≤ 1%
+2025-09-10 17:00:40,078 - INFO - Training fold 2/5...
+2025-09-10 17:00:40,550 - WARNING - Cannot achieve both TPR ≥ 95% AND FPR ≤ 1%
+2025-09-10 17:00:40,551 - INFO - Training fold 3/5...
+2025-09-10 17:00:40,755 - WARNING - Cannot achieve both TPR ≥ 95% AND FPR ≤ 1%
+2025-09-10 17:00:40,757 - INFO - Training fold 4/5...
+2025-09-10 17:00:41,021 - WARNING - Cannot achieve both TPR ≥ 95% AND FPR ≤ 1%
+2025-09-10 17:00:41,024 - INFO - Training fold 5/5...
+2025-09-10 17:00:41,270 - WARNING - Cannot achieve both TPR ≥ 95% AND FPR ≤ 1%
+2025-09-10 17:00:41,279 - INFO - === Cross-Validation Results ===
+2025-09-10 17:00:41,279 - INFO - Accuracy: 0.7250 ± 0.0612
+2025-09-10 17:00:41,279 - INFO - TPR: 0.9600 ± 0.0200
+2025-09-10 17:00:41,279 - INFO - FPR: 0.5100 ± 0.1068
+2025-09-10 17:00:41,320 - INFO - Model saved to ../models/malware_lightgbm_200sample_model.pkl
+2025-09-10 17:00:41,344 - INFO - LightGBM model saved to ../models/malware_lightgbm_200sample_model.txt
+2025-09-10 17:00:41,344 - INFO - === Training Summary ===
+2025-09-10 17:00:41,344 - INFO - Training completed on 200 samples
+2025-09-10 17:00:41,344 - INFO - Model saved as: malware_lightgbm_200sample_model.pkl
+2025-09-10 17:00:41,345 - INFO - Final Accuracy: 0.7500
+2025-09-10 17:00:41,345 - INFO - Final TPR: 0.9667
+2025-09-10 17:00:41,345 - INFO - Final FPR: 0.4667
+2025-09-10 17:00:41,345 - INFO - CV Accuracy: 0.7250 ± 0.0612
+2025-09-10 17:00:41,345 - INFO - Training completed successfully!
+2025-09-10 17:02:54,547 - INFO - Initialized LightGBM trainer for malware detection
+2025-09-10 17:02:54,549 - INFO - Available RAM: 27.29 GB
+2025-09-10 17:02:54,549 - INFO - Available RAM: 0.67 GB
+2025-09-10 17:02:54,549 - INFO - CPU cores: 12
+2025-09-10 17:02:54,549 - INFO - === Training on 200-sample dataset ===
+2025-09-10 17:02:54,549 - INFO - Loading preprocessed sample data...
+2025-09-10 17:02:54,549 - INFO - Loading sample dataset...
+2025-09-10 17:02:54,560 - INFO - Loaded 200 samples with 2381 features
+2025-09-10 17:02:54,560 - INFO - Class distribution - Malicious: 100, Benign: 100
+2025-09-10 17:02:54,561 - INFO - Metadata loaded: {'n_samples': 200, 'n_features': 2381, 'n_malicious': 100, 'n_benign': 100, 'feature_dim': 2381}
+2025-09-10 17:02:54,561 - INFO - Loaded sample data: 200 samples, 2381 features
+2025-09-10 17:02:54,561 - INFO - Class distribution - Malicious: 100, Benign: 100
+2025-09-10 17:02:54,561 - INFO - Selecting top 500 features...
+2025-09-10 17:03:06,718 - INFO - Initialized LightGBM trainer for malware detection
+2025-09-10 17:03:06,718 - INFO - Available RAM: 27.29 GB
+2025-09-10 17:03:06,718 - INFO - Available RAM: 4.55 GB
+2025-09-10 17:03:06,718 - INFO - CPU cores: 12
+2025-09-10 17:03:06,719 - INFO - === Training on 200-sample dataset ===
+2025-09-10 17:03:06,719 - INFO - Loading preprocessed sample data...
+2025-09-10 17:03:06,719 - INFO - Loading sample dataset...
+2025-09-10 17:03:06,727 - INFO - Loaded 200 samples with 2381 features
+2025-09-10 17:03:06,727 - INFO - Class distribution - Malicious: 100, Benign: 100
+2025-09-10 17:03:06,727 - INFO - Metadata loaded: {'n_samples': 200, 'n_features': 2381, 'n_malicious': 100, 'n_benign': 100, 'feature_dim': 2381}
+2025-09-10 17:03:06,727 - INFO - Loaded sample data: 200 samples, 2381 features
+2025-09-10 17:03:06,727 - INFO - Class distribution - Malicious: 100, Benign: 100
+2025-09-10 17:03:06,727 - INFO - Selecting top 500 features...
+2025-09-10 17:03:07,409 - INFO - Selected 500 features with highest importance
+2025-09-10 17:03:07,413 - INFO - Reduced features to 500 most important features
+2025-09-10 17:03:07,413 - INFO - Training LightGBM model on sample data...
+2025-09-10 17:03:07,413 - INFO - Starting model training...
+2025-09-10 17:03:07,415 - INFO - Training set: 140 samples
+2025-09-10 17:03:07,415 - INFO - Validation set: 60 samples
+2025-09-10 17:03:07,417 - INFO - Applied StandardScaler to features
+2025-09-10 17:03:07,417 - INFO - Training with parameters: {'objective': 'binary', 'metric': ['binary_logloss', 'auc'], 'boosting_type': 'gbdt', 'verbosity': 1, 'num_leaves': 63, 'max_depth': 8, 'learning_rate': 0.05, 'feature_fraction': 0.8, 'bagging_fraction': 0.8, 'bagging_freq': 5, 'min_data_in_leaf': 10, 'max_bin': 255, 'data_sample_strategy': 'bagging', 'num_threads': 4, 'force_col_wise': True, 'lambda_l1': 0.5, 'lambda_l2': 0.5, 'min_gain_to_split': 0.01, 'is_unbalance': False, 'scale_pos_weight': 1.0}
+2025-09-10 17:03:07,542 - INFO - Training completed in 0.12 seconds
+2025-09-10 17:03:07,543 - INFO - Evaluating model performance...
+2025-09-10 17:03:07,568 - WARNING - Cannot achieve both TPR ≥ 95% AND FPR ≤ 1%
+2025-09-10 17:03:07,600 - INFO - === Model Performance ===
+2025-09-10 17:03:07,600 - INFO - Accuracy: 0.7500
+2025-09-10 17:03:07,600 - INFO - Precision: 0.6744
+2025-09-10 17:03:07,600 - INFO - TPR (Recall): 0.9667 ✓
+2025-09-10 17:03:07,600 - INFO - FPR: 0.4667 ✗
+2025-09-10 17:03:07,600 - INFO - AUC: 0.8411
+2025-09-10 17:03:07,600 - INFO - Optimal threshold: 0.1893
+2025-09-10 17:03:07,601 - INFO - Avg prediction time: 0.0004 seconds ✓
+2025-09-10 17:03:07,601 - INFO - Competition compliant: ✗ NO
+2025-09-10 17:03:07,609 - INFO - Model size: 0.07 MB
+2025-09-10 17:03:07,610 - INFO - Performing cross-validation...
+2025-09-10 17:03:07,610 - INFO - Performing 5-fold cross-validation...
+2025-09-10 17:03:07,611 - INFO - Training fold 1/5...
+2025-09-10 17:03:07,764 - WARNING - Cannot achieve both TPR ≥ 95% AND FPR ≤ 1%
+2025-09-10 17:03:07,794 - INFO - Training fold 2/5...
+2025-09-10 17:03:07,944 - WARNING - Cannot achieve both TPR ≥ 95% AND FPR ≤ 1%
+2025-09-10 17:03:07,946 - INFO - Training fold 3/5...
+2025-09-10 17:03:08,126 - WARNING - Cannot achieve both TPR ≥ 95% AND FPR ≤ 1%
+2025-09-10 17:03:08,127 - INFO - Training fold 4/5...
+2025-09-10 17:03:08,249 - WARNING - Cannot achieve both TPR ≥ 95% AND FPR ≤ 1%
+2025-09-10 17:03:08,251 - INFO - Training fold 5/5...
+2025-09-10 17:03:08,425 - WARNING - Cannot achieve both TPR ≥ 95% AND FPR ≤ 1%
+2025-09-10 17:03:08,426 - INFO - === Cross-Validation Results ===
+2025-09-10 17:03:08,427 - INFO - Accuracy: 0.7250 ± 0.0612
+2025-09-10 17:03:08,427 - INFO - TPR: 0.9600 ± 0.0200
+2025-09-10 17:03:08,427 - INFO - FPR: 0.5100 ± 0.1068
+2025-09-10 17:03:08,436 - INFO - Model saved to ../models/malware_lightgbm_200sample_model.pkl
+2025-09-10 17:03:08,496 - INFO - LightGBM model saved to ../models/malware_lightgbm_200sample_model.txt
+2025-09-10 17:03:08,496 - INFO - === Training Summary ===
+2025-09-10 17:03:08,496 - INFO - Training completed on 200 samples
+2025-09-10 17:03:08,496 - INFO - Model saved as: malware_lightgbm_200sample_model.pkl
+2025-09-10 17:03:08,497 - INFO - Final Accuracy: 0.7500
+2025-09-10 17:03:08,497 - INFO - Final TPR: 0.9667
+2025-09-10 17:03:08,497 - INFO - Final FPR: 0.4667
+2025-09-10 17:03:08,497 - INFO - CV Accuracy: 0.7250 ± 0.0612
+2025-09-10 17:03:08,497 - INFO - Training completed successfully!
+2025-09-13 14:36:57,087 - INFO - Initialized LightGBM trainer for malware detection
+2025-09-13 14:36:57,088 - INFO - Available RAM: 27.29 GB
+2025-09-13 14:36:57,088 - INFO - Available RAM: 25.52 GB
+2025-09-13 14:36:57,088 - INFO - CPU cores: 12
+2025-09-13 14:36:57,088 - INFO - === Training on 200-sample dataset ===
+2025-09-13 14:36:57,088 - INFO - Loading preprocessed sample data...
+2025-09-13 14:36:57,088 - INFO - Loading sample dataset...
+2025-09-13 14:36:57,178 - INFO - Loaded 5000 samples with 2381 features
+2025-09-13 14:36:57,178 - INFO - Class distribution - Malicious: 2500, Benign: 2500
+2025-09-13 14:36:57,178 - INFO - Metadata loaded: {'n_samples': 5000, 'n_features': 2381, 'n_malicious': 2500, 'n_benign': 2500, 'feature_dim': 2381}
+2025-09-13 14:36:57,178 - INFO - Loaded sample data: 5000 samples, 2381 features
+2025-09-13 14:36:57,178 - INFO - Class distribution - Malicious: 2500, Benign: 2500
+2025-09-13 14:36:57,179 - INFO - Selecting top 500 features...
+2025-09-13 14:37:02,902 - INFO - Selected 500 features with highest importance
+2025-09-13 14:37:02,909 - INFO - Reduced features to 500 most important features
+2025-09-13 14:37:02,909 - INFO - Training LightGBM model on sample data...
+2025-09-13 14:37:02,909 - INFO - Starting model training...
+2025-09-13 14:37:02,915 - INFO - Training set: 3500 samples
+2025-09-13 14:37:02,915 - INFO - Validation set: 1500 samples
+2025-09-13 14:37:02,927 - INFO - Applied StandardScaler to features
+2025-09-13 14:37:02,927 - INFO - Training with parameters: {'objective': 'binary', 'metric': ['binary_logloss', 'auc'], 'boosting_type': 'gbdt', 'verbosity': 1, 'num_leaves': 63, 'max_depth': 8, 'learning_rate': 0.05, 'feature_fraction': 0.8, 'bagging_fraction': 0.8, 'bagging_freq': 5, 'min_data_in_leaf': 10, 'max_bin': 255, 'data_sample_strategy': 'bagging', 'num_threads': 4, 'force_col_wise': True, 'lambda_l1': 0.5, 'lambda_l2': 0.5, 'min_gain_to_split': 0.01, 'is_unbalance': False, 'scale_pos_weight': 1.0}
+2025-09-13 14:37:07,007 - INFO - Training completed in 4.08 seconds
+2025-09-13 14:37:07,007 - INFO - Evaluating model performance...
+2025-09-13 14:37:07,011 - WARNING - Cannot achieve both TPR ≥ 95% AND FPR ≤ 1%
+2025-09-13 14:37:07,017 - INFO - === Model Performance ===
+2025-09-13 14:37:07,017 - INFO - Accuracy: 0.8740
+2025-09-13 14:37:07,017 - INFO - Precision: 0.8243
+2025-09-13 14:37:07,017 - INFO - TPR (Recall): 0.9507 ✓
+2025-09-13 14:37:07,017 - INFO - FPR: 0.2027 ✗
+2025-09-13 14:37:07,017 - INFO - AUC: 0.9708
+2025-09-13 14:37:07,017 - INFO - Optimal threshold: 0.1770
+2025-09-13 14:37:07,017 - INFO - Avg prediction time: 0.0000 seconds ✓
+2025-09-13 14:37:07,017 - INFO - Competition compliant: ✗ NO
+2025-09-13 14:37:07,023 - INFO - Model size: 1.19 MB
+2025-09-13 14:37:07,023 - INFO - Performing cross-validation...
+2025-09-13 14:37:07,023 - INFO - Performing 5-fold cross-validation...
+2025-09-13 14:37:07,024 - INFO - Training fold 1/5...
+2025-09-13 14:37:11,106 - WARNING - Cannot achieve both TPR ≥ 95% AND FPR ≤ 1%
+2025-09-13 14:37:11,109 - INFO - Training fold 2/5...
+2025-09-13 14:37:15,222 - WARNING - Cannot achieve both TPR ≥ 95% AND FPR ≤ 1%
+2025-09-13 14:37:15,225 - INFO - Training fold 3/5...
+2025-09-13 14:37:19,790 - WARNING - Cannot achieve both TPR ≥ 95% AND FPR ≤ 1%
+2025-09-13 14:37:19,793 - INFO - Training fold 4/5...
+2025-09-13 14:37:23,946 - WARNING - Cannot achieve both TPR ≥ 95% AND FPR ≤ 1%
+2025-09-13 14:37:23,949 - INFO - Training fold 5/5...
+2025-09-13 14:37:28,240 - WARNING - Cannot achieve both TPR ≥ 95% AND FPR ≤ 1%
+2025-09-13 14:37:28,243 - INFO - === Cross-Validation Results ===
+2025-09-13 14:37:28,243 - INFO - Accuracy: 0.9100 ± 0.0137
+2025-09-13 14:37:28,244 - INFO - TPR: 0.9512 ± 0.0016
+2025-09-13 14:37:28,244 - INFO - FPR: 0.1312 ± 0.0268
+2025-09-13 14:37:28,295 - INFO - Model saved to ../models/malware_lightgbm_200sample_model.pkl
+2025-09-13 14:37:28,300 - INFO - LightGBM model saved to ../models/malware_lightgbm_200sample_model.txt
+2025-09-13 14:37:28,300 - INFO - === Training Summary ===
+2025-09-13 14:37:28,300 - INFO - Training completed on 5000 samples
+2025-09-13 14:37:28,300 - INFO - Model saved as: malware_lightgbm_200sample_model.pkl
+2025-09-13 14:37:28,300 - INFO - Final Accuracy: 0.8740
+2025-09-13 14:37:28,300 - INFO - Final TPR: 0.9507
+2025-09-13 14:37:28,300 - INFO - Final FPR: 0.2027
+2025-09-13 14:37:28,300 - INFO - CV Accuracy: 0.9100 ± 0.0137
+2025-09-13 14:37:28,300 - INFO - Training completed successfully!

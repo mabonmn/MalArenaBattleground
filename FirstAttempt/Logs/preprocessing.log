@@ -65,3 +65,25 @@
 2025-09-09 23:55:38,366 - INFO - Preprocessing complete!
 2025-09-09 23:55:41,183 - INFO - Preprocessing completed successfully!
 2025-09-09 23:55:41,183 - INFO - Ready for training with train_lightgbm.py
+2025-09-13 14:26:43,867 - INFO - Initialized EMBER preprocessor for 5000 samples
+2025-09-13 14:26:43,867 - INFO - Available RAM: 27.29 GB
+2025-09-13 14:26:43,868 - INFO - Starting EMBER preprocessing pipeline...
+2025-09-13 14:26:43,868 - INFO - Loading EMBER dataset...
+2025-09-13 14:26:44,931 - INFO - Complete vectorized features found, loading existing files...
+2025-09-13 14:26:44,931 - INFO - Loading vectorized features...
+2025-09-13 14:28:31,043 - INFO - Loaded 1000000 samples with 2381 features
+2025-09-13 14:28:31,292 - INFO - Cleaning dataset...
+2025-09-13 14:32:24,130 - INFO - Removed 200000 unlabeled samples
+2025-09-13 14:34:15,898 - INFO - Cleaned dataset: 800000 samples, 2381 features
+2025-09-13 14:34:15,921 - INFO - Class distribution - Malicious: 400000, Benign: 400000
+2025-09-13 14:34:15,996 - INFO - Creating balanced sample of 5000 samples...
+2025-09-13 14:34:16,047 - INFO - Created balanced sample: 5000 samples
+2025-09-13 14:34:16,048 - INFO - Sample class distribution - Malicious: 2500, Benign: 2500
+2025-09-13 14:34:16,640 - INFO - Saved preprocessed data to ../ember2018/preprocessed
+2025-09-13 14:34:16,641 - INFO - Files: X_sample.npz, y_sample.npz, metadata_sample.json
+2025-09-13 14:34:16,641 - INFO - Saving full cleaned dataset...
+2025-09-13 14:35:54,497 - INFO - Saved preprocessed data to ../ember2018/preprocessed
+2025-09-13 14:35:54,497 - INFO - Files: X_full.npz, y_full.npz, metadata_full.json
+2025-09-13 14:35:54,497 - INFO - Preprocessing complete!
+2025-09-13 14:35:57,384 - INFO - Preprocessing completed successfully!
+2025-09-13 14:35:57,385 - INFO - Ready for training with train_lightgbm.py

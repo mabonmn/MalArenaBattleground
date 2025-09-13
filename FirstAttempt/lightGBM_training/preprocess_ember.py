@@ -292,7 +292,7 @@ def main():
     """Main preprocessing function"""
     # Configuration
     data_directory = "../ember2018"  # Adjust path as needed
-    sample_size = 200
+    sample_size = 5000
     
     # Check if data directory exists
     if not os.path.exists(data_directory):
