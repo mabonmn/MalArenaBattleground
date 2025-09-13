@@ -1,6 +1,15 @@
 # pip install git+https://github.com/endgameinc/ember.git
-flask>=1.1.2
+flask>=2.0.0  # Using the newer version requirement
 gevent>=1.4.0
 envparse
 annoy
+numpy>=1.21.0
 pefile
+tqdm>=4.62.0  # Using the more specific version
+pandas>=1.3.0
+scikit-learn>=1.0.0
+lightgbm>=3.3.0
+lief>=0.9.0
+psutil>=5.8.0
+matplotlib>=3.5.0
+seaborn>=0.11.0
