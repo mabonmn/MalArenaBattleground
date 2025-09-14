@@ -20,6 +20,8 @@ def main():
                         help="test up to this many files in each folder/archive")
     parser.add_argument('--timeout', type=int,
                         default=TIMEOUT, help="timeout for requests")
+    parser.add_argument('--out-dir', type=str, default=None,
+                        help='Directory to write fps.txt, fns.txt, errors.txt (default: directory of --benign path)')
     args = parser.parse_args()
 
     assert pathlib.Path(args.b).is_file() or pathlib.Path(
@@ -50,20 +52,41 @@ def main():
     summary, fps, fns, errors = measure_efficacy(
         args.b, args.m, args.url, args.max, args.timeout, stop_after=args.stopafter)
 
-    with open('fps.txt', 'w') as outfile:
+    # Determine output directory: --out-dir, else the directory of the benign path
+    if args.out_dir is not None:
+        out_dir = pathlib.Path(args.out_dir)
+    else:
+        bpath = pathlib.Path(args.b)
+        out_dir = bpath if bpath.is_dir() else bpath.parent
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    fps_path = out_dir / 'fps.txt'
+    fns_path = out_dir / 'fns.txt'
+    errs_path = out_dir / 'errors.txt'
+    summary_path = out_dir / 'summary.json'
+
+    with open(fps_path, 'w') as outfile:
         for fp in fps:
             outfile.write(f'{fp}\n')
 
-    with open('fns.txt', 'w') as outfile:
+    with open(fns_path, 'w') as outfile:
         for fn in fns:
             outfile.write(f'{fn}\n')
 
-    with open('errors.txt', 'w') as outfile:
+    with open(errs_path, 'w') as outfile:
         for fn, e in errors:
             outfile.write(f'{fn}\t{e}\n')
 
+    # Save summary as JSON in the same directory for convenience
+    try:
+        with open(summary_path, 'w') as fsum:
+            json.dump(summary, fsum, indent=2)
+    except Exception:
+        pass
+
     print('Summary:')
     print(json.dumps(summary, indent=2))
+    print(f"Saved outputs to: {out_dir}\n  - {fps_path}\n  - {fns_path}\n  - {errs_path}\n  - {summary_path}")
 
 
 if __name__ == '__main__':
