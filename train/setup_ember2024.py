@@ -38,30 +38,16 @@ def download_dataset(data_dir: str = "data/ember2024"):
     print(f"Downloading EMBER2024 PE dataset to {data_path}...")
     print("This may take a while depending on your internet connection...")
     
-    # Download PE files (Win32, Win64, .NET) for Windows malware detection
-    print("Downloading Win32 training data...")
-    thrember.download_dataset(str(data_path), file_type="Win32", split="train")
-    
-    print("Downloading Win32 test data...")
-    thrember.download_dataset(str(data_path), file_type="Win32", split="test")
-    
-    print("Downloading Win64 training data...")
-    thrember.download_dataset(str(data_path), file_type="Win64", split="train")
-    
-    print("Downloading Win64 test data...")
-    thrember.download_dataset(str(data_path), file_type="Win64", split="test")
-    
-    print("Downloading .NET training data...")
-    thrember.download_dataset(str(data_path), file_type=".NET", split="train")
-    
-    print("Downloading .NET test data...")
-    thrember.download_dataset(str(data_path), file_type=".NET", split="test")
+    # Download all PE files (Win32, Win64, .NET) for Windows malware detection
+    print("Downloading PE training and test data...")
+    thrember.download_dataset(str(data_path), file_type="PE")
     
     # Also download challenge set for evaluation
     print("Downloading challenge set...")
     thrember.download_dataset(str(data_path), split="challenge")
     
     print("Dataset download complete!")
+
 
 
 def vectorize_features(data_dir: str = "data/ember2024"):

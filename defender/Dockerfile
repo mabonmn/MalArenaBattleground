@@ -53,12 +53,16 @@ WORKDIR /opt/defender/
 ENV PATH="/opt/venv/bin:$PATH"
 ENV PYTHONPATH="/opt/defender"
 
+<<<<<<< HEAD
+# one may tune model file / threshold / name via environmental variables
+=======
 # Model configuration - use EMBER LightGBM by default
 ENV DF_MODEL_TYPE ember_lightgbm
 ENV DF_EMBER_MODEL_PATH ember_lightgbm/lightgbm_ember_model.txt
 ENV DF_EMBER_MAX_BYTES 2097152
 
 # Legacy environment variables (kept for compatibility)
+>>>>>>> f03e4ce738841fb783d95cbb37232b784d673358
 ENV DF_MODEL_GZ_PATH models/ember_model.txt.gz
 ENV DF_MODEL_THRESH 0.8336
 ENV DF_MODEL_NAME ember
