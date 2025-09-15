@@ -8,3 +8,7 @@ numpy==1.21.6
 
 # CPU-only PyTorch compatible with Python 3.7
 torch==1.13.1+cpu
+
+# LightGBM and EMBER2024 for malware detection
+lightgbm==3.3.5
+git+https://github.com/FutureComputing4AI/EMBER2024.git
