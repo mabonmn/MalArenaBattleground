@@ -6,3 +6,7 @@ annoy
 numpy
 tqdm
 pefile
+
+# LightGBM and EMBER2024 for malware detection
+lightgbm>=3.3.0
+git+https://github.com/FutureComputing4AI/EMBER2024.git
