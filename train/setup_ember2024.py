@@ -38,19 +38,16 @@ def download_dataset(data_dir: str = "data/ember2024"):
     print(f"Downloading EMBER2024 PE dataset to {data_path}...")
     print("This may take a while depending on your internet connection...")
     
-    # Download all PE files (Win32, Win64, .NET) for Windows malware detection
+    # Download Win32 and Win 64 training and test data, its a lot so just download a couple of jsons then quit, get test and training for both
     print("Downloading PE training and test data...")
-    thrember.download_dataset(str(data_path), file_type="PE")
+    thrember.download_dataset(str(data_path), file_type="Win32", split="test")
     
-    # Also download challenge set for evaluation
-    print("Downloading challenge set...")
-    thrember.download_dataset(str(data_path), split="challenge")
     
     print("Dataset download complete!")
 
 
 
-def vectorize_features(data_dir: str = "data/ember2024"):
+def vectorize_features(data_dir: str = "data/ember2024", subset="test"):
     """Vectorize raw features into training-ready format."""
     try:
         import thrember
