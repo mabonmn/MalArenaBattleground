@@ -35,6 +35,10 @@ for dep in "${dependencies[@]}"; do
     pip install "$dep"
 done
 
+# Fix oscrypto libcrypto issue
+echo "Installing fixed oscrypto version..."
+pip3 install -I git+https://github.com/wbond/oscrypto.git
+
 # Try to install thrember with fallback
 echo "Attempting to install EMBER2024 (thrember)..."
 if pip install git+https://github.com/FutureComputing4AI/EMBER2024.git; then

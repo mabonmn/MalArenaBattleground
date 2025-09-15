@@ -19,6 +19,16 @@ This implementation provides a complete LightGBM-based malware classifier using 
 
 ## Quick Start
 
+### 1. build environment
+
+```
+python3 -m venv venv
+source venv/bin/activate
+./install_venv_deps.sh
+pip3 install -I git+https://github.com/wbond/oscrypto.git 
+```
+oscrypto install is to fix bug 
+
 ### 1. Train the Model
 
 ```bash
