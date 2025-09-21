@@ -303,8 +303,8 @@ class StringCNNModel:
     """Wrapper for our string-based CNN model that matches the defender interface."""
     
     def __init__(self, weights_path: str, max_bytes: int = 1048576, threshold: float = 0.5, 
-                 device: str = 'cpu', emb_dim: int = 32, num_kernels: int = 128, 
-                 kernels: Tuple[int, ...] = (3, 5, 7, 9, 11), strings_only: bool = False):
+                 device: str = 'cpu', emb_dim: int = 8, num_kernels: int = 64, 
+                 kernels: Tuple[int, ...] = (3, 5, 7), strings_only: bool = False):
         self.weights_path = weights_path
         self.max_bytes = max_bytes
         self.threshold = threshold

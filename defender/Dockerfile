@@ -53,12 +53,11 @@ WORKDIR /opt/defender/
 ENV PATH="/opt/venv/bin:$PATH"
 ENV PYTHONPATH="/opt/defender"
 
-# one may tune model file / threshold / name via environmental variables
-ENV DF_MODEL_GZ_PATH models/ember_model.txt.gz
-ENV DF_MODEL_THRESH 0.8336
-ENV DF_MODEL_NAME ember
-ENV DF_MODEL_BALL_THRESH 0.25
-ENV DF_MODEL_HISTORY 10000
+
+
+# Set thresholds for dual-model setup
+ENV DF_MALCONV_THRESH 0.80
+ENV DF_STRINGCNN_THRESH 0.80
 
 #############################
 # RUN CODE
