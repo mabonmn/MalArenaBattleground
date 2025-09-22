@@ -15,13 +15,13 @@ if __name__ == "__main__":
     malconv_weights = envparse.env("DF_MALCONV_WEIGHTS", cast=str, default="models/malconv_model.pt")
     malconv_threshold = envparse.env("DF_MALCONV_THRESH", cast=float, default=0.80)
     malconv_max_bytes = envparse.env("DF_MALCONV_MAX_BYTES", cast=int, default=1048576)
-    malconv_weight = envparse.env("DF_MALCONV_VOTE_WEIGHT", cast=float, default=1.0)
+    malconv_weight = envparse.env("DF_MALCONV_VOTE_WEIGHT", cast=float, default=1.5)  #Higher weight due to better performance
     
     # EMBER LightGBM-specific config
-    lightgbm_model_path = envparse.env("DF_LIGHTGBM_MODEL_PATH", cast=str, default="models/LGBM_model.txt")
+    lightgbm_model_path = envparse.env("DF_LIGHTGBM_MODEL_PATH", cast=str, default="models/newLGBM_model.txt")
     lightgbm_threshold = envparse.env("DF_LIGHTGBM_THRESH", cast=float, default=None)
     lightgbm_max_bytes = envparse.env("DF_LIGHTGBM_MAX_BYTES", cast=int, default=2097152)
-    lightgbm_weight = envparse.env("DF_LIGHTGBM_VOTE_WEIGHT", cast=float, default=1.5)  # Higher weight due to better performance
+    lightgbm_weight = envparse.env("DF_LIGHTGBM_VOTE_WEIGHT", cast=float, default=1.0)  
 
     device = 'cpu'  # CPU only inside container per challenge limits
     

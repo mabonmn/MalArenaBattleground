@@ -25,12 +25,18 @@ def load_vectorized_features(data_dir, subset):
     # Try to load from thrember .dat files first
     try:
         import thrember
+        print(f"Loading {subset} data from thrember .dat files...")
+        print("This may take several minutes for large datasets...")
         X, y = thrember.read_vectorized_features(data_dir, subset)
+        print(f"Loaded {subset} data: {X.shape[0]} samples, {X.shape[1]} features")
         # Handle NaN values
         import numpy as np
+        print("Cleaning NaN values...")
         X = np.nan_to_num(X, nan=0.0, posinf=0.0, neginf=0.0)
+        print(f"Data loading completed for {subset} set")
         return X, y
     except (ImportError, Exception):
+        print(f"Failed to load with thrember, trying numpy files...")
         pass
     
     # Fallback to numpy files
@@ -57,12 +63,19 @@ def load_vectorized_features(data_dir, subset):
 def train_model(data_dir, params=None):
     """Train LightGBM model on EMBER2024 data."""
     
+    print("Starting LightGBM training process...")
+    print("=" * 50)
+    
     # Load training and test data
+    print("Step 1/4: Loading training data...")
     X_train, y_train = load_vectorized_features(data_dir, "train")
+    
+    print("Step 2/4: Loading test data...")
     X_test, y_test = load_vectorized_features(data_dir, "test")
     
     # Filter out unlabeled samples (label = -1)
     import numpy as np
+    print("Step 3/4: Preprocessing data...")
     train_mask = y_train != -1
     test_mask = y_test != -1
     
@@ -74,6 +87,7 @@ def train_model(data_dir, params=None):
     print(f"Training set: {X_train.shape[0]} samples, {X_train.shape[1]} features")
     print(f"Test set: {X_test.shape[0]} samples")
     print(f"Train labels - Malicious: {np.sum(y_train)}, Benign: {len(y_train) - np.sum(y_train)}")
+    print("=" * 50)
     
     # Default parameters if none provided
     if params is None:
@@ -98,7 +112,8 @@ def train_model(data_dir, params=None):
     valid_data = lgb.Dataset(X_test, label=y_test, reference=train_data)
     
     # Train the model
-    print("Training LightGBM model...")
+    print("Step 4/4: Training LightGBM model...")
+    print("Training in progress (this may take a while)...")
     model = lgb.train(
         params,
         train_data,
