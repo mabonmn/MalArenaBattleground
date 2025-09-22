@@ -1,14 +1,17 @@
 --extra-index-url https://download.pytorch.org/whl/cpu
 
-# Pin versions compatible with Python 3.7
-Flask==2.2.5
-gevent==21.12.0
+# Compatible with Python 3.11 for both MalConv and EMBER2024
+Flask==3.0.0
+gevent==23.9.1
 envparse==0.2.0
-numpy==1.21.6
+numpy==1.26.0
 
-# CPU-only PyTorch compatible with Python 3.7
-torch==1.13.1+cpu
+# PyTorch for MalConv (CPU-only for container efficiency)
+torch==2.1.0+cpu
 
-# LightGBM and EMBER2024 for malware detection
-lightgbm==3.3.5
+# LightGBM and EMBER2024 for thrember features (updated to meet thrember requirements)
+lightgbm>=4.5.0
 git+https://github.com/FutureComputing4AI/EMBER2024.git
+
+# Additional dependencies for your tournament ensemble (updated to meet thrember requirements)
+scikit-learn>=1.5.1
