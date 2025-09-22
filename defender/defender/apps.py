@@ -1,11 +1,11 @@
 from flask import Flask, jsonify, request
 
 
-def create_app(model):
+def create_app(ensemble):
     app = Flask(__name__)
-    app.config['model'] = model
+    app.config['ensemble'] = ensemble
 
-    # analyse a sample
+    # analyse a sample with ensemble voting
     @app.route('/', methods=['POST'])
     def post():
         # curl -XPOST --data-binary @somePEfile http://127.0.0.1:8080/ -H "Content-Type: application/octet-stream"
@@ -15,26 +15,24 @@ def create_app(model):
             return resp
 
         bytez = request.data
+        ensemble = app.config['ensemble']
 
-        model = app.config['model']
+        try:
+            # Get ensemble prediction
+            result = ensemble.predict(bytez)
+            
+            if not isinstance(result, int) or result not in {0, 1}:
+                resp = jsonify({'error': 'unexpected ensemble result (not in [0,1])'})
+                resp.status_code = 500  # Internal Server Error
+                return resp
 
-        # query the model
-        result = model.predict(bytez)
-        if not isinstance(result, int) or result not in {0, 1}:
-            resp = jsonify({'error': 'unexpected model result (not in [0,1])'})
-            resp.status_code = 500  # Internal Server Error
+            resp = jsonify({'result': result})
+            resp.status_code = 200
             return resp
-
-        resp = jsonify({'result': result})
-        resp.status_code = 200
-        return resp
-
-    # get the model info
-    @app.route('/model', methods=['GET'])
-    def get_model():
-        # curl -XGET http://127.0.0.1:8080/model
-        resp = jsonify(app.config['model'].model_info())
-        resp.status_code = 200
-        return resp
+            
+        except Exception as e:
+            resp = jsonify({'error': f'ensemble prediction failed: {str(e)}'})
+            resp.status_code = 500
+            return resp
 
     return app

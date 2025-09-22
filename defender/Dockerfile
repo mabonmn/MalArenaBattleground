@@ -53,17 +53,20 @@ WORKDIR /opt/defender/
 ENV PATH="/opt/venv/bin:$PATH"
 ENV PYTHONPATH="/opt/defender"
 
-# Model configuration - use EMBER LightGBM by default
-ENV DF_MODEL_TYPE ember_lightgbm
-ENV DF_EMBER_MODEL_PATH ember_lightgbm/lightgbm_ember_model.txt
-ENV DF_EMBER_MAX_BYTES 2097152
+# Ensemble configuration
+ENV DF_ENSEMBLE_THRESHOLD 0.5
 
-# Legacy environment variables (kept for compatibility)
-ENV DF_MODEL_GZ_PATH models/ember_model.txt.gz
-ENV DF_MODEL_THRESH 0.8336
-ENV DF_MODEL_NAME ember
-ENV DF_MODEL_BALL_THRESH 0.25
-ENV DF_MODEL_HISTORY 10000
+# MalConv model configuration
+ENV DF_MALCONV_WEIGHTS models/malconv_model.pt
+ENV DF_MALCONV_THRESH 0.80
+ENV DF_MALCONV_MAX_BYTES 1048576
+ENV DF_MALCONV_VOTE_WEIGHT 1.0
+
+# LightGBM model configuration  
+ENV DF_LIGHTGBM_MODEL_PATH models/LGBM_model.txt
+ENV DF_LIGHTGBM_THRESH 0.8336
+ENV DF_LIGHTGBM_MAX_BYTES 2097152
+ENV DF_LIGHTGBM_VOTE_WEIGHT 1.5
 
 #############################
 # RUN CODE
@@ -74,7 +77,7 @@ CMD ["python","-m","defender"]
 # docker build -t mydefender .
 ## TO RUN IMAGE (ENVIRONMENTAL VARIABLES DECLARED ABOVE)
 # docker run -itp 8080:8080 --memory=1g --cpus=1 mydefender
-## TO RUN IMAGE (OVERRIDE TO USE MALCONV MODEL)
-# docker run -itp 8080:8080 --memory=1g --cpus=1 --env DF_MODEL_TYPE="malconv" mydefender
-## TO RUN IMAGE (OVERRIDE EMBER MODEL SETTINGS)
-# docker run -itp 8080:8080 --memory=1g --cpus=1 --env DF_EMBER_THRESHOLD=0.9 mydefender
+## TO RUN IMAGE (OVERRIDE ENSEMBLE SETTINGS)
+# docker run -itp 8080:8080 --memory=1g --cpus=1 --env DF_ENSEMBLE_THRESHOLD=0.6 --env DF_LIGHTGBM_VOTE_WEIGHT=2.0 mydefender
+## TO RUN IMAGE (OVERRIDE MODEL THRESHOLDS)
+# docker run -itp 8080:8080 --memory=1g --cpus=1 --env DF_MALCONV_THRESH=0.90 --env DF_LIGHTGBM_THRESH=0.60 mydefender
