@@ -15,3 +15,6 @@ git+https://github.com/FutureComputing4AI/EMBER2024.git
 
 # Additional dependencies for your tournament ensemble (updated to meet thrember requirements)
 scikit-learn>=1.5.1
+
+# PE file parsing for enhanced feature extraction
+pefile>=2023.2.7

@@ -3,7 +3,9 @@ import envparse
 from defender.apps import create_app
 from defender.models.malconv_model import MalConvTorchModel
 from defender.models.ember_lightgbm_model import EmberLightGBMModel
-from defender.models.simple_ensemble import SimpleEnsemble
+from defender.models.enhanced_ember_lightgbm_model import EnhancedEmberLightGBMModel
+
+from defender.models.ensemble import Ensemble
 
 if __name__ == "__main__":
     # Retrieve config values from environment variables
@@ -22,11 +24,19 @@ if __name__ == "__main__":
     lightgbm_threshold = envparse.env("DF_LIGHTGBM_THRESH", cast=float, default=None)
     lightgbm_max_bytes = envparse.env("DF_LIGHTGBM_MAX_BYTES", cast=int, default=2097152)
     lightgbm_weight = envparse.env("DF_LIGHTGBM_VOTE_WEIGHT", cast=float, default=1.0)  
+    lightgbm_use_enhanced = envparse.env("DF_LIGHTGBM_USE_ENHANCED", cast=bool, default=True)
+
+    # EMBER LightGBM 800k samples 
+    lightgbm800k_model_path = envparse.env("DF_LIGHTGBM800K_MODEL_PATH", cast=str, default="models/LGBM_model800k.txt")
+    lightgbm800k_threshold = envparse.env("DF_LIGHTGBM800K_THRESH", cast=float, default=None)
+    lightgbm800k_max_bytes = envparse.env("DF_LIGHTGBM800K_MAX_BYTES", cast=int, default=819200)
+    lightgbm800k_weight = envparse.env("DF_LIGHTGBM800K_VOTE_WEIGHT", cast=float, default=1.0)
+    lightgbm800k_use_enhanced = envparse.env("DF_LIGHTGBM800K_USE_ENHANCED", cast=bool, default=True)
 
     device = 'cpu'  # CPU only inside container per challenge limits
     
     # Initialize simple ensemble
-    ensemble = SimpleEnsemble(threshold=ensemble_threshold)
+    ensemble = Ensemble(threshold=ensemble_threshold)
     
     # Initialize and add MalConv model
     malconv_path_abs = malconv_weights
@@ -51,15 +61,47 @@ if __name__ == "__main__":
         lightgbm_path_abs = os.path.join(os.path.dirname(os.path.abspath(__file__)), lightgbm_path_abs)
 
     if os.path.isfile(lightgbm_path_abs):
-        lightgbm_model = EmberLightGBMModel(
-            model_path=lightgbm_path_abs,
-            threshold=lightgbm_threshold,
-            max_bytes=lightgbm_max_bytes
-        )
+        if lightgbm_use_enhanced:
+            lightgbm_model = EnhancedEmberLightGBMModel(
+                model_path=lightgbm_path_abs,
+                threshold=lightgbm_threshold,
+                max_bytes=lightgbm_max_bytes
+            )
+        else:
+            lightgbm_model = EmberLightGBMModel(
+                model_path=lightgbm_path_abs,
+                threshold=lightgbm_threshold,
+                max_bytes=lightgbm_max_bytes
+            )
         ensemble.add_model("lightgbm", lightgbm_model, weight=lightgbm_weight)
-        print(f"✓ Added LightGBM model with weight {lightgbm_weight}")
+        enhanced_status = " (enhanced)" if lightgbm_use_enhanced else ""
+        print(f"✓ Added LightGBM model{enhanced_status} with weight {lightgbm_weight}")
     else:
         print(f"⚠ LightGBM model not found at {lightgbm_path_abs}, skipping")
+    
+    # Initialize and add EMBER LightGBM 800k model
+    lightgbm800k_path_abs = lightgbm800k_model_path
+    if not lightgbm800k_path_abs.startswith(os.sep):
+        lightgbm800k_path_abs = os.path.join(os.path.dirname(os.path.abspath(__file__)), lightgbm800k_path_abs)
+
+    if os.path.isfile(lightgbm800k_path_abs):
+        if lightgbm800k_use_enhanced:
+            lightgbm800k_model = EnhancedEmberLightGBMModel(
+                model_path=lightgbm800k_path_abs,
+                threshold=lightgbm800k_threshold,
+                max_bytes=lightgbm800k_max_bytes
+            )
+        else:
+            lightgbm800k_model = EmberLightGBMModel(
+                model_path=lightgbm800k_path_abs,
+                threshold=lightgbm800k_threshold,
+                max_bytes=lightgbm800k_max_bytes
+            )
+        ensemble.add_model("lightgbm800k", lightgbm800k_model, weight=lightgbm800k_weight)
+        enhanced_status = " (enhanced)" if lightgbm800k_use_enhanced else ""
+        print(f"✓ Added LightGBM 800k model{enhanced_status} with weight {lightgbm800k_weight}")
+    else:
+        print(f"⚠ LightGBM 800k model not found at {lightgbm800k_path_abs}, skipping")
     
     # Verify we have at least one model
     if len(ensemble.models) == 0:
