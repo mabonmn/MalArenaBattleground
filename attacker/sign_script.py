@@ -1,7 +1,7 @@
 """
 Linux PE Signing Script - Compatible with orchestrator API
 
-This script signs PE files using osslsigncode on Linux, matching the API 
+This script signs PE files using osslsigncode on Linux, matching the API
 used by pe_string_injector.py, code_cave_inserter.py, and wrappe_packer.py
 """
 
@@ -88,7 +88,6 @@ def run_command(cmd, timeout=300, check_return=True):
 
     try:
         logger.debug(f"Running: {' '.join(cmd) if isinstance(cmd, list) else cmd}")
-
         result = subprocess.run(
             cmd, capture_output=True, text=True, timeout=timeout
         )
@@ -103,6 +102,7 @@ def run_command(cmd, timeout=300, check_return=True):
             logger.error(f"Command failed with return code {result.returncode}")
 
         return result
+
     except subprocess.TimeoutExpired:
         logger.error(f"Command timed out after {timeout} seconds")
         return None
@@ -176,7 +176,6 @@ def sign_pe_files_in_directory(input_dir, cert_file, key_file, tools=None):
     # Find PE files
     input_path = Path(input_dir)
     pe_files = []
-
     for pattern in ["*.exe", "*.dll"]:
         pe_files.extend(input_path.glob(pattern))
 
@@ -189,7 +188,6 @@ def sign_pe_files_in_directory(input_dir, cert_file, key_file, tools=None):
     # Prepare CSV output
     csv_file = Path(input_dir) / "signed_results.csv"
     results = []
-
     signed_count = 0
     failed_count = 0
 
@@ -286,9 +284,9 @@ def main():
     # Primary argument - directory to sign
     parser.add_argument('input_dir', help='Directory containing PE files to sign')
 
-    # Certificate options
-    parser.add_argument('--cert', default='mykey.pem', help='Certificate file path')
-    parser.add_argument('--key', default='mycert.pem', help='Private key file path') 
+    # Certificate options - FIXED: correct defaults
+    parser.add_argument('--cert', default='mycert.pem', help='Certificate file path')
+    parser.add_argument('--key', default='mykey.pem', help='Private key file path')
     parser.add_argument('--subject', default='Test Code Signing Certificate', help='Certificate subject')
 
     # Compatibility with orchestrator
@@ -333,9 +331,7 @@ def main():
         print(f"ERROR: {e}")
         return 1
 
-    finally:
-        logger.info(f"Session log saved to: {log_file}")
-        print(f"Activity log: {log_file}")
+
 
 if __name__ == "__main__":
     sys.exit(main())
