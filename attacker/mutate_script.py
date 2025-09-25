@@ -16,13 +16,23 @@ import os
 import random
 import datetime
 
-def setup_logging(verbose=False):
+def setup_logging(verbose=False, log_file="mutation_script.log"):
     """Set up logging configuration."""
     level = logging.DEBUG if verbose else logging.INFO
+
+    # Create handlers for both console and file output
+    console_handler = logging.StreamHandler()
+    file_handler = logging.FileHandler(log_file, mode='a')
+
+    # Set formatting
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    console_handler.setFormatter(formatter)
+    file_handler.setFormatter(formatter)
+
+    # Configure root logger
     logging.basicConfig(
         level=level,
-        format='%(asctime)s - %(levelname)s - %(message)s',
-        handlers=[logging.StreamHandler()]
+        handlers=[console_handler, file_handler]
     )
 
 def check_mutation_tools():
@@ -216,9 +226,11 @@ def main():
     parser.add_argument('--preserve-names', action='store_true', default=True,
                         help='Preserve original filenames')
     parser.add_argument('-v', '--verbose', action='store_true', help='Verbose logging')
+    parser.add_argument('--log-file', default='mutation_script.log',
+                       help='Log file path (default: mutation_script.log)')
     args = parser.parse_args()
 
-    setup_logging(args.verbose)
+    setup_logging(args.verbose, args.log_file)
     logger = logging.getLogger()
     logger.info("=== PE MUTATION SCRIPT (Linux) ===")
     logger.info(f"Input: {args.input}, Output: {args.output}, Level: {args.mutation_level}")
