@@ -35,6 +35,7 @@ def verify_script_exists(script_name):
         return True, str(script_path.resolve())
     return False, f"Script not found: {script_name}"
 
+
 def run_mutation(input_dir, output_dir, mutation_level=5):
     """Run mutation on all files in input directory."""
     try:
@@ -54,22 +55,41 @@ def run_mutation(input_dir, output_dir, mutation_level=5):
             sys.executable, mutate_script,
             str(input_dir), str(output_dir),
             "--mutation-level", str(mutation_level),
-            "--preserve-names"
+            "--preserve-names",
+            "--verbose"  # Add verbose flag to get more output
         ]
 
         logging.debug(f"Running: {' '.join(cmd)}")
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
+
+        # FIXED: Don't capture stdout, allow it to flow through to console
+        result = subprocess.run(
+            cmd,
+            text=True,
+            timeout=300,
+            stdout=None,  # Let stdout go to console (shows logging)
+            stderr=subprocess.PIPE  # Only capture stderr for error handling
+        )
 
         if result.returncode == 0:
             logging.info("✓ Mutation completed successfully")
             return True
         else:
-            logging.warning(f"Mutation failed: {result.stderr}")
+            logging.warning(f"Mutation failed with return code {result.returncode}")
+            if result.stderr:
+                logging.warning(f"Mutation stderr: {result.stderr}")
             # Copy files without mutation as fallback
             for file_path in Path(input_dir).glob("*"):
                 if file_path.is_file():
                     shutil.copy2(file_path, Path(output_dir) / file_path.name)
             return True
+
+    except subprocess.TimeoutExpired:
+        logging.error("Mutation timed out after 300 seconds")
+        # Copy files without mutation as fallback
+        for file_path in Path(input_dir).glob("*"):
+            if file_path.is_file():
+                shutil.copy2(file_path, Path(output_dir) / file_path.name)
+        return True
 
     except Exception as e:
         logging.error(f"Mutation error: {e}")
@@ -78,7 +98,6 @@ def run_mutation(input_dir, output_dir, mutation_level=5):
             if file_path.is_file():
                 shutil.copy2(file_path, Path(output_dir) / file_path.name)
         return True
-
 def run_string_injection(input_dir, output_dir, source_dir):
     """Run string injection step."""
     try:
