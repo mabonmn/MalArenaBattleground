@@ -1,9 +1,7 @@
+#!/usr/bin/env python3
 """
-PE Mutation Script (Linux) - Mutates PE files using metame or binary tricks.
-
-This script handles mutation of PE files on Linux, removing the UPX fallback.
-It first tries `metame` if available; otherwise applies binary padding,
-objcopy section tricks, and byte shuffling.
+Simplified PE Mutation Script using Astral-PE
+Removes unnecessary parameters and focuses on Astral-PE integration
 """
 
 from pathlib import Path
@@ -11,242 +9,143 @@ import subprocess
 import sys
 import argparse
 import logging
-import shutil
 import os
-import random
-import datetime
 
-def setup_logging(verbose=False, log_file="mutation_script.log"):
+def setup_logging(verbose=False):
     """Set up logging configuration."""
     level = logging.DEBUG if verbose else logging.INFO
-
-    # Create handlers for both console and file output
-    console_handler = logging.StreamHandler()
-    file_handler = logging.FileHandler(log_file, mode='a')
-
-    # Set formatting
-    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-    console_handler.setFormatter(formatter)
-    file_handler.setFormatter(formatter)
-
-    # Configure root logger
     logging.basicConfig(
         level=level,
-        handlers=[console_handler, file_handler]
+        format='%(asctime)s - %(levelname)s - %(message)s',
+        handlers=[logging.StreamHandler()]
     )
 
-def check_mutation_tools():
-    """Check for available mutation tools on the system."""
-    logger = logging.getLogger()
-    tools = {}
-    metame_path = shutil.which("metame")
-    if metame_path:
-        logger.info(f"Found metame: {metame_path}")
-        tools["metame"] = metame_path
-    else:
-        logger.debug("metame not found")
-    # Check objcopy
-    objcopy_path = shutil.which("objcopy")
-    if objcopy_path:
-        logger.debug(f"Found objcopy: {objcopy_path}")
-        tools["objcopy"] = objcopy_path
-    # No UPX fallback
-    return tools
+def mutate_with_astral_pe(input_file, output_file):
+    """
+    Mutate PE file using Astral-PE.exe
+    """
+    logger = logging.getLogger(__name__)
 
-def mutate_with_metame(input_binary, output_binary, mutation_level=5, tools=None):
-    """Mutate a binary using metame."""
-    logger = logging.getLogger()
-    if not tools or "metame" not in tools:
-        logger.warning("metame not available")
+    if not Path(input_file).exists():
+        logger.error(f"Input file does not exist: {input_file}")
         return False
 
-    cmd = [
-        tools["metame"],
-        "-i", str(input_binary),
-        "-o", str(output_binary),
-        "-d"
-    ]
-    if mutation_level != 5:
-        cmd.extend(["-l", str(mutation_level)])
-    logger.debug(f"Running: {' '.join(cmd)}")
+    cmd = ["Astral-PE.exe", str(input_file), "-o", str(output_file)]
+
     try:
+        logger.info(f"Running Astral-PE: {' '.join(cmd)}")
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
-        if result.returncode == 0 and Path(output_binary).exists():
-            logger.info(f"✓ Metame mutation successful: {output_binary}")
+
+        if result.returncode == 0:
+            logger.info(f"Astral-PE mutation successful: {output_file}")
+            if result.stdout:
+                logger.debug(f"Astral-PE output: {result.stdout}")
             return True
         else:
-            logger.warning(f"Metame mutation failed: {result.stderr}")
-            return False
-    except Exception as e:
-        logger.warning(f"Metame mutation error: {e}")
-        return False
-
-def mutate_with_binary_tricks(input_binary, output_binary):
-    """Apply binary-level mutations using Linux tools."""
-    logger = logging.getLogger()
-    logger.info("Applying binary tricks mutation")
-    try:
-        shutil.copy2(input_binary, output_binary)
-        mutations_applied = 0
-
-        # 1. Apply objcopy section mutation if available
-        tools = check_mutation_tools()
-        if "objcopy" in tools:
-            try:
-                temp_file = str(output_binary) + ".temp"
-                shutil.copy2(output_binary, temp_file)
-                # Create dummy section data
-                data_file = "./mutation_data"
-                with open(data_file, "wb") as f:
-                    f.write(b"MUTATION" + os.urandom(64))
-                cmd = [
-                    tools["objcopy"],
-                    "--add-section", f".mutation={data_file}",
-                    temp_file, str(output_binary)
-                ]
-                result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
-                if result.returncode == 0:
-                    logger.debug("Applied objcopy section mutation")
-                    mutations_applied += 1
-                else:
-                    shutil.copy2(temp_file, output_binary)
-                os.unlink(temp_file)
-                os.unlink(data_file)
-            except Exception as e:
-                logger.debug(f"objcopy mutation failed: {e}")
-
-        # 2. Binary padding
-        try:
-            with open(output_binary, "ab") as f:
-                padding_size = random.randint(64, 512)
-                padding_data = bytearray(padding_size)
-                for i in range(0, padding_size, 4):
-                    padding_data[i:i+4] = b"\x00\x00\x90\x90"
-                f.write(padding_data)
-                mutations_applied += 1
-                logger.debug(f"Applied binary padding mutation: {padding_size} bytes")
-        except Exception as e:
-            logger.debug(f"Padding mutation failed: {e}")
-
-        # 3. Byte shuffling
-        if mutations_applied < 2:
-            try:
-                with open(output_binary, "r+b") as f:
-                    f.seek(0, 2)
-                    file_size = f.tell()
-                    if file_size > 1024:
-                        start = max(1024, file_size - 512)
-                        size = min(256, file_size - start)
-                        if size > 64:
-                            f.seek(start)
-                            data = bytearray(f.read(size))
-                            for i in range(0, len(data) - 4, 8):
-                                if random.random() < 0.3:
-                                    data[i:i+4], data[i+4:i+8] = data[i+4:i+8], data[i:i+4]
-                            f.seek(start)
-                            f.write(data)
-                            mutations_applied += 1
-                            logger.debug("Applied basic byte shuffling")
-            except Exception as e:
-                logger.debug(f"Byte shuffling failed: {e}")
-
-        if mutations_applied > 0:
-            logger.info(f"✓ Applied {mutations_applied} binary mutations")
-            return True
-        else:
-            logger.warning("No mutations could be applied")
+            logger.error(f"Astral-PE mutation failed: {result.stderr}")
             return False
 
+    except subprocess.TimeoutExpired:
+        logger.error("Astral-PE process timed out")
+        return False
+    except FileNotFoundError:
+        logger.error("Astral-PE.exe not found. Make sure it's in PATH or current directory")
+        return False
     except Exception as e:
-        logger.error(f"Binary tricks mutation failed: {e}")
+        logger.error(f"Astral-PE mutation error: {e}")
         return False
 
-def mutate_single_file(input_file, output_file, mutation_level=5):
-    """Mutate a single PE file."""
-    logger = logging.getLogger()
-    input_path = Path(input_file)
-    output_path = Path(output_file)
-    if not input_path.exists():
-        logger.error(f"Input file not found: {input_file}")
-        return False
-    output_path.parent.mkdir(parents=True, exist_ok=True)
+def mutate_single_file(input_path, output_path=None):
+    """
+    Mutate a single PE file using Astral-PE
+    """
+    logger = logging.getLogger(__name__)
 
-    tools = check_mutation_tools()
-    if "metame" in tools and mutate_with_metame(input_path, output_path, mutation_level, tools):
+    input_path = Path(input_path)
+
+    if output_path is None:
+        # Default output: <input>_ast.exe (following Astral-PE convention)
+        output_path = input_path.with_stem(f"{input_path.stem}_ast")
+    else:
+        output_path = Path(output_path)
+
+    logger.info(f"Mutating: {input_path} -> {output_path}")
+
+    if mutate_with_astral_pe(input_path, output_path):
+        logger.info(f"Successfully mutated: {output_path}")
         return True
-    logger.info("Metame not used or failed, trying binary tricks...")
-    if mutate_with_binary_tricks(input_path, output_path):
-        return True
 
-    logger.warning("No mutation possible, copying with timestamp update")
-    try:
-        shutil.copy2(input_path, output_path)
-        ts = datetime.datetime.now().timestamp()
-        os.utime(output_path, (ts, ts))
-        logger.info(f"✓ Copied with timestamp update: {output_file}")
-        return True
-    except Exception as e:
-        logger.error(f"Fallback copy failed: {e}")
+    logger.error(f"Failed to mutate: {input_path}")
+    return False
+
+def mutate_directory(input_dir, output_dir=None, recursive=False):
+    """
+    Mutate all PE files in a directory using Astral-PE
+    """
+    logger = logging.getLogger(__name__)
+    input_dir = Path(input_dir)
+
+    if not input_dir.is_dir():
+        logger.error(f"Input directory does not exist: {input_dir}")
         return False
 
-def mutate_directory(input_dir, output_dir, mutation_level=5, preserve_names=True):
-    """Mutate all files in a directory."""
-    logger = logging.getLogger()
-    input_path = Path(input_dir)
-    if not input_path.is_dir():
-        logger.error(f"Input directory not found: {input_dir}")
-        return False
-    output_path = Path(output_dir)
-    output_path.mkdir(parents=True, exist_ok=True)
+    if output_dir is None:
+        output_dir = input_dir / "mutated"
+    else:
+        output_dir = Path(output_dir)
 
-    mutated, failed = 0, 0
-    for f in sorted(input_path.iterdir()):
-        if not f.is_file():
-            continue
-        out_file = output_path / f.name if preserve_names else output_path / f"mutated_{f.name}"
-        logger.info(f"Processing: {f.name}")
-        if mutate_single_file(str(f), str(out_file), mutation_level):
-            mutated += 1
-        else:
-            failed += 1
-            try:
-                shutil.copy2(f, out_file)
-            except:
-                pass
+    output_dir.mkdir(parents=True, exist_ok=True)
 
-    logger.info(f"Mutation completed: {mutated} mutated, {failed} failed")
-    return True
+    # Find PE files
+    pattern = "**/*.exe" if recursive else "*.exe"
+    pe_files = list(input_dir.glob(pattern))
+    pe_files.extend(input_dir.glob(pattern.replace(".exe", ".dll")))
+
+    if not pe_files:
+        logger.warning(f"No PE files found in: {input_dir}")
+        return True
+
+    success_count = 0
+    for pe_file in pe_files:
+        output_file = output_dir / f"{pe_file.stem}_ast{pe_file.suffix}"
+        if mutate_with_astral_pe(pe_file, output_file):
+            success_count += 1
+
+    logger.info(f"Successfully mutated {success_count}/{len(pe_files)} files")
+    return success_count > 0
 
 def main():
-    parser = argparse.ArgumentParser(description='Mutate PE files using Linux tools')
-    parser.add_argument('input', help='Input file or directory')
-    parser.add_argument('output', help='Output file or directory')
-    parser.add_argument('-l', '--mutation-level', type=int, default=5,
-                        help='Mutation level (1-10)')
-    parser.add_argument('--preserve-names', action='store_true', default=True,
-                        help='Preserve original filenames')
-    parser.add_argument('-v', '--verbose', action='store_true', help='Verbose logging')
-    parser.add_argument('--log-file', default='mutation_script.log',
-                       help='Log file path (default: mutation_script.log)')
+    parser = argparse.ArgumentParser(
+        description="Mutate PE files using Astral-PE mutation engine"
+    )
+    parser.add_argument("input", help="Input PE file or directory")
+    parser.add_argument("-o", "--output", help="Output file or directory")
+    parser.add_argument("-r", "--recursive", action="store_true", 
+                       help="Process directories recursively")
+    parser.add_argument("-v", "--verbose", action="store_true", 
+                       help="Enable verbose logging")
+
     args = parser.parse_args()
 
-    setup_logging(args.verbose, args.log_file)
-    logger = logging.getLogger()
-    logger.info("=== PE MUTATION SCRIPT (Linux) ===")
-    logger.info(f"Input: {args.input}, Output: {args.output}, Level: {args.mutation_level}")
+    setup_logging(args.verbose)
+    logger = logging.getLogger(__name__)
 
-    status = 1
-    if Path(args.input).is_file():
-        status = 0 if mutate_single_file(args.input, args.output, args.mutation_level) else 2
-    elif Path(args.input).is_dir():
-        status = 0 if mutate_directory(args.input, args.output, args.mutation_level, args.preserve_names) else 3
+    input_path = Path(args.input)
+
+    if input_path.is_file():
+        success = mutate_single_file(input_path, args.output)
+    elif input_path.is_dir():
+        success = mutate_directory(input_path, args.output, args.recursive)
     else:
-        logger.error(f"Input not found: {args.input}")
-        status = 4
+        logger.error(f"Input path does not exist: {input_path}")
+        return 1
 
-    if status == 0:
-        logger.info("Mutation completed successfully")
-    sys.exit(status)
+    if success:
+        logger.info("Mutation process completed successfully")
+        return 0
+    else:
+        logger.error("Mutation process failed")
+        return 1
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
