@@ -41,9 +41,9 @@ def run_astral_pe_mutation(input_dir, output_dir, phase_name="MUTATION"):
 
     try:
         # Use the minimal mutation script
-        exists, script_path = verify_script_exists("mutate_script_minimal.py")
+        exists, script_path = verify_script_exists("mutate_script.py")
         if not exists:
-            logger.error("mutate_script_minimal.py not found")
+            logger.error("mutate_script.py not found")
             # Fallback: copy files
             Path(output_dir).mkdir(parents=True, exist_ok=True)
             for file_path in Path(input_dir).glob("*"):
