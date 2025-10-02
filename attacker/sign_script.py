@@ -1,8 +1,7 @@
 """
-Linux PE Signing Script - Compatible with orchestrator API
-
-This script signs PE files using osslsigncode on Linux, matching the API
-used by pe_string_injector.py, code_cave_inserter.py, and wrappe_packer.py
+Complete Linux PE Signing Script - FIXED VERSION
+This script signs PE files using osslsigncode on Linux, compatible with orchestrator API
+FIXED: Resolved "overwriting existing file not supported" error by using temporary files
 """
 
 import os
@@ -11,11 +10,12 @@ import argparse
 import subprocess
 import logging
 import shutil
+import tempfile
 from pathlib import Path
 import datetime
 import csv
 
-def setup_activity_logging(script_name="linux_pe_signer"):
+def setup_activity_logging(script_name="linux_pe_signer_complete"):
     """Set up comprehensive activity logging to match other scripts."""
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     log_file = f"{script_name}_activity_{timestamp}.log"
@@ -162,6 +162,100 @@ def create_certificate_if_missing(cert_file, key_file, subject="Test Code Signin
     logger.info(f"✓ Private key created: {key_file}")
     return True
 
+def sign_single_pe_file(pe_file_path, cert_file, key_file, osslsigncode_path):
+    """
+    Sign a single PE file using osslsigncode.
+
+    FIXED: Uses temporary file to avoid 'overwriting existing file not supported' error
+    """
+    logger = logging.getLogger()
+
+    pe_file = Path(pe_file_path)
+
+    try:
+        # Create temporary file for signed output
+        with tempfile.NamedTemporaryFile(suffix='.exe', delete=False) as temp_file:
+            temp_output = temp_file.name
+
+        logger.debug(f"Using temporary file: {temp_output}")
+
+        # Build signing command with separate input and output files
+        base_cmd = [
+            osslsigncode_path, "sign",
+            "-certs", str(cert_file),
+            "-key", str(key_file),
+            "-h", "sha256",
+            "-in", str(pe_file),
+            "-out", temp_output
+        ]
+
+        # Try with timestamping first
+        cmd_with_ts = base_cmd + ["-t", "http://timestamp.digicert.com"]
+        result = run_command(cmd_with_ts, check_return=False, timeout=120)
+
+        signed_with_timestamp = False
+        if result and result.returncode == 0:
+            signed_with_timestamp = True
+            logger.debug(f"Successfully signed {pe_file.name} with timestamp")
+        else:
+            # Try without timestamping
+            logger.debug("Timestamping failed, trying without timestamp")
+            result = run_command(base_cmd, check_return=False, timeout=60)
+
+            if not result or result.returncode != 0:
+                error_msg = result.stderr if result else "Command failed"
+                logger.error(f"Failed to sign {pe_file.name}: {error_msg}")
+                # Clean up temp file
+                try:
+                    os.unlink(temp_output)
+                except:
+                    pass
+                return False, error_msg
+
+        # Verify the signed file was created
+        temp_path = Path(temp_output)
+        if not temp_path.exists() or temp_path.stat().st_size == 0:
+            logger.error(f"Signed output file is missing or empty")
+            try:
+                os.unlink(temp_output)
+            except:
+                pass
+            return False, "Signed output file is missing or empty"
+
+        # Replace original file with signed version
+        try:
+            # Create backup first
+            backup_path = str(pe_file) + ".backup"
+            shutil.copy2(pe_file, backup_path)
+            logger.debug(f"Created backup: {backup_path}")
+
+            # Replace original with signed version
+            shutil.move(temp_output, pe_file)
+            logger.debug(f"Replaced original file with signed version")
+
+            # Remove backup on success
+            try:
+                os.unlink(backup_path)
+            except:
+                pass
+
+            status_msg = "with timestamp" if signed_with_timestamp else "without timestamp"
+            logger.info(f"✓ Successfully signed {pe_file.name} {status_msg}")
+            return True, ""
+
+        except Exception as e:
+            logger.error(f"Failed to replace original file: {e}")
+            # Try to clean up
+            try:
+                os.unlink(temp_output)
+            except:
+                pass
+            return False, f"Failed to replace original file: {e}"
+
+    except Exception as e:
+        logger.error(f"Exception during signing: {e}")
+        return False, str(e)
+
 def sign_pe_files_in_directory(input_dir, cert_file, key_file, tools=None):
     """Sign all PE files in a directory - main API function."""
     logger = logging.getLogger()
@@ -176,8 +270,14 @@ def sign_pe_files_in_directory(input_dir, cert_file, key_file, tools=None):
     # Find PE files
     input_path = Path(input_dir)
     pe_files = []
-    for pattern in ["*.exe", "*.dll"]:
+
+    for pattern in ["*.exe", "*.dll", "*.sys"]:
         pe_files.extend(input_path.glob(pattern))
+
+    # Also check files without extension that might be PE files
+    for file_path in input_path.glob("*"):
+        if file_path.is_file() and not file_path.suffix:
+            pe_files.append(file_path)
 
     if not pe_files:
         logger.warning(f"No PE files found in {input_dir}")
@@ -194,51 +294,8 @@ def sign_pe_files_in_directory(input_dir, cert_file, key_file, tools=None):
     for pe_file in pe_files:
         logger.info(f"Processing: {pe_file.name}")
 
-        # Create backup
-        backup_file = str(pe_file) + ".backup"
-        try:
-            shutil.copy2(pe_file, backup_file)
-            logger.debug(f"Created backup: {backup_file}")
-        except Exception as e:
-            logger.warning(f"Could not create backup: {e}")
-
         # Sign the file
-        success = False
-        error_msg = ""
-
-        try:
-            # Build signing command
-            cmd = [
-                osslsigncode_path, "sign",
-                "-certs", str(cert_file),
-                "-key", str(key_file),
-                "-h", "sha256",
-                "-in", str(pe_file),
-                "-out", str(pe_file)
-            ]
-
-            # Try with timestamping first
-            cmd_with_ts = cmd + ["-t", "http://timestamp.digicert.com"]
-            result = run_command(cmd_with_ts, check_return=False)
-
-            if result and result.returncode == 0:
-                success = True
-                logger.info(f"✓ Signed {pe_file.name} with timestamp")
-            else:
-                # Try without timestamping
-                logger.debug("Timestamping failed, trying without timestamp")
-                result = run_command(cmd, check_return=False)
-
-                if result and result.returncode == 0:
-                    success = True
-                    logger.info(f"✓ Signed {pe_file.name} without timestamp")
-                else:
-                    error_msg = result.stderr if result else "Command failed"
-                    logger.error(f"✗ Failed to sign {pe_file.name}: {error_msg}")
-
-        except Exception as e:
-            error_msg = str(e)
-            logger.error(f"Exception signing {pe_file.name}: {e}")
+        success, error_msg = sign_single_pe_file(pe_file, cert_file, key_file, osslsigncode_path)
 
         # Record result
         if success:
@@ -247,20 +304,6 @@ def sign_pe_files_in_directory(input_dir, cert_file, key_file, tools=None):
         else:
             failed_count += 1
             results.append([str(pe_file), "error", error_msg[:100]])  # Truncate long errors
-
-            # Restore backup if signing failed
-            try:
-                shutil.copy2(backup_file, pe_file)
-                logger.debug(f"Restored backup for {pe_file.name}")
-            except Exception as e:
-                logger.warning(f"Could not restore backup: {e}")
-
-        # Clean up backup
-        try:
-            if Path(backup_file).exists():
-                os.unlink(backup_file)
-        except Exception as e:
-            logger.debug(f"Could not remove backup: {e}")
 
     # Write CSV results
     try:
@@ -279,12 +322,12 @@ def sign_pe_files_in_directory(input_dir, cert_file, key_file, tools=None):
 
 def main():
     """Main function matching the API of other scripts."""
-    parser = argparse.ArgumentParser(description='Linux PE Signer with Activity Logging')
+    parser = argparse.ArgumentParser(description='Complete Linux PE Signer with Activity Logging - FIXED')
 
     # Primary argument - directory to sign
     parser.add_argument('input_dir', help='Directory containing PE files to sign')
 
-    # Certificate options - FIXED: correct defaults
+    # Certificate options
     parser.add_argument('--cert', default='mycert.pem', help='Certificate file path')
     parser.add_argument('--key', default='mykey.pem', help='Private key file path')
     parser.add_argument('--subject', default='Test Code Signing Certificate', help='Certificate subject')
@@ -298,7 +341,7 @@ def main():
     log_file = setup_activity_logging()
     logger = logging.getLogger()
 
-    print("Linux PE Signer with Activity Logging")
+    print("Complete Linux PE Signer with Activity Logging - FIXED VERSION")
     print(f"Log file: {log_file}")
 
     try:
@@ -330,8 +373,6 @@ def main():
         logger.error(f"Unexpected error: {e}")
         print(f"ERROR: {e}")
         return 1
-
-
 
 if __name__ == "__main__":
     sys.exit(main())

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Linux PE Modification Orchestrator with Astral-PE Integration
+Complete Linux PE Modification Orchestrator with Astral-PE Integration
 Runs on Linux, processes Windows PE executables
 Implements: Build → Astral-PE → Processing → Astral-PE → Packing → Astral-PE → Signing
 """
@@ -17,7 +17,7 @@ import datetime
 def setup_logging():
     """Set up logging configuration."""
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    log_file = f"orchestrator_linux_{timestamp}.log"
+    log_file = f"orchestrator_complete_{timestamp}.log"
 
     logging.basicConfig(
         level=logging.INFO,
@@ -41,9 +41,9 @@ def run_astral_pe_mutation(input_dir, output_dir, phase_name="MUTATION"):
 
     try:
         # Use the minimal mutation script
-        exists, script_path = verify_script_exists("mutate_script.py")
+        exists, script_path = verify_script_exists("mutate_script_complete.py")
         if not exists:
-            logger.error("mutate_script.py not found")
+            logger.error("mutate_script_complete.py not found")
             # Fallback: copy files
             Path(output_dir).mkdir(parents=True, exist_ok=True)
             for file_path in Path(input_dir).glob("*"):
@@ -261,14 +261,24 @@ def run_packing(input_dir, output_dir, packer_type="upx"):
         return False
 
 def run_signing(input_dir):
-    """Run signing step."""
+    """Run signing step with the fixed signing script."""
     logger = logging.getLogger(__name__)
     logger.info("=== SIGNING PHASE ===")
 
     try:
-        exists, script_path = verify_script_exists("sign_script.py")
-        if not exists:
-            logger.warning("sign_script.py not found - skipping signing")
+        # Try the fixed signing script first, then fallback to original
+        signing_scripts = ["sign_script_fixed.py", "sign_script.py"]
+        script_path = None
+
+        for script in signing_scripts:
+            exists, path = verify_script_exists(script)
+            if exists:
+                script_path = path
+                logger.info(f"Using signing script: {script}")
+                break
+
+        if not script_path:
+            logger.warning("No signing script found - skipping signing")
             return True
 
         cmd = [sys.executable, script_path, str(input_dir), "--verbose"]
@@ -287,16 +297,16 @@ def run_signing(input_dir):
 
 def main():
     """
-    Linux PE Modification Orchestrator
-    Usage: python orchestrator_linux.py target_dir source_dir [--output-dir DIR] [--skip-X] [--packer TYPE]
+    Complete Linux PE Modification Orchestrator
+    Usage: python orchestrator_complete.py target_dir source_dir [options]
     """
 
     # Simple argument parsing
     args = sys.argv[1:]
     if len(args) < 2:
-        print("Usage: python orchestrator_linux.py target_dir source_dir [options]")
+        print("Usage: python orchestrator_complete.py target_dir source_dir [options]")
         print("Options:")
-        print("  --output-dir DIR     Output directory (default: output_linux)")
+        print("  --output-dir DIR     Output directory (default: output_complete)")
         print("  --skip-strings       Skip string injection")
         print("  --skip-caves         Skip code cave insertion")
         print("  --skip-packing       Skip packing")
@@ -311,7 +321,7 @@ def main():
     source_dir = args[1]
 
     # Parse options
-    output_base = "output_linux"
+    output_base = "output_complete"
     skip_strings = False
     skip_caves = False
     skip_packing = False
@@ -356,7 +366,7 @@ def main():
     # Set up logging
     log_file = setup_logging()
 
-    logging.info("=== LINUX PE MODIFICATION ORCHESTRATOR ===")
+    logging.info("=== COMPLETE LINUX PE MODIFICATION ORCHESTRATOR ===")
     logging.info("Workflow: Build → Astral-PE → Process → Astral-PE → Pack → Astral-PE → Sign")
 
     try:
