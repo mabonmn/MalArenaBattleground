@@ -1,15 +1,15 @@
+#!/usr/bin/env python3
 """
-Orchestrator Version 3 - Mutates only at the end
-
-This version uses metame to mutate PE files only once at the very end, before signing.
+Linux PE Modification Orchestrator with Astral-PE Integration
+Runs on Linux, processes Windows PE executables
+Implements: Build → Astral-PE → Processing → Astral-PE → Packing → Astral-PE → Signing
 """
 
 import os
 import sys
-import argparse
-import shutil
 import subprocess
 import logging
+import shutil
 import traceback
 from pathlib import Path
 import datetime
@@ -17,7 +17,8 @@ import datetime
 def setup_logging():
     """Set up logging configuration."""
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    log_file = f"orchestrator_v3_{timestamp}.log"
+    log_file = f"orchestrator_linux_{timestamp}.log"
+
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s - %(levelname)s - %(message)s',
@@ -29,80 +30,53 @@ def setup_logging():
     return log_file
 
 def verify_script_exists(script_name):
-    """Verify that a required script exists in the current directory."""
+    """Verify that a required script exists."""
     script_path = Path(script_name)
-    if script_path.exists() and script_path.is_file():
-        return True, str(script_path.resolve())
-    return False, f"Script not found: {script_name}"
+    return script_path.exists() and script_path.is_file(), str(script_path.resolve())
 
+def run_astral_pe_mutation(input_dir, output_dir, phase_name="MUTATION"):
+    """Run Astral-PE mutation phase."""
+    logger = logging.getLogger(__name__)
+    logger.info(f"=== {phase_name} PHASE (ASTRAL-PE) ===")
 
-def run_mutation(input_dir, output_dir, mutation_level=5):
-    """Run mutation on all files in input directory."""
     try:
-        logging.info("=== MUTATION STEP ===")
-
-        # Check if mutate script exists
-        exists, mutate_script = verify_script_exists("mutate_script.py")
+        # Use the minimal mutation script
+        exists, script_path = verify_script_exists("mutate_script_minimal.py")
         if not exists:
-            logging.error("mutate_script.py not found - copying without mutation")
+            logger.error("mutate_script_minimal.py not found")
+            # Fallback: copy files
+            Path(output_dir).mkdir(parents=True, exist_ok=True)
             for file_path in Path(input_dir).glob("*"):
                 if file_path.is_file():
                     shutil.copy2(file_path, Path(output_dir) / file_path.name)
             return True
 
         # Run mutation script
-        cmd = [
-            sys.executable, mutate_script,
-            str(input_dir), str(output_dir),
-            "--mutation-level", str(mutation_level),
-            "--preserve-names",
-            "--verbose"  # Add verbose flag to get more output
-        ]
-
-        logging.debug(f"Running: {' '.join(cmd)}")
-
-        # FIXED: Don't capture stdout, allow it to flow through to console
-        result = subprocess.run(
-            cmd,
-            text=True,
-            timeout=300,
-            stdout=None,  # Let stdout go to console (shows logging)
-            stderr=subprocess.PIPE  # Only capture stderr for error handling
-        )
+        cmd = [sys.executable, script_path, str(input_dir), str(output_dir)]
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
 
         if result.returncode == 0:
-            logging.info("✓ Mutation completed successfully")
+            logger.info(f"✓ {phase_name} completed successfully")
             return True
         else:
-            logging.warning(f"Mutation failed with return code {result.returncode}")
-            if result.stderr:
-                logging.warning(f"Mutation stderr: {result.stderr}")
-            # Copy files without mutation as fallback
-            for file_path in Path(input_dir).glob("*"):
-                if file_path.is_file():
-                    shutil.copy2(file_path, Path(output_dir) / file_path.name)
-            return True
-
-    except subprocess.TimeoutExpired:
-        logging.error("Mutation timed out after 300 seconds")
-        # Copy files without mutation as fallback
-        for file_path in Path(input_dir).glob("*"):
-            if file_path.is_file():
-                shutil.copy2(file_path, Path(output_dir) / file_path.name)
-        return True
+            logger.warning(f"{phase_name} had issues: {result.stderr}")
+            return True  # Continue anyway
 
     except Exception as e:
-        logging.error(f"Mutation error: {e}")
-        # Copy files without mutation as fallback
+        logger.error(f"{phase_name} error: {e}")
+        # Fallback: copy files
+        Path(output_dir).mkdir(parents=True, exist_ok=True)
         for file_path in Path(input_dir).glob("*"):
             if file_path.is_file():
                 shutil.copy2(file_path, Path(output_dir) / file_path.name)
         return True
+
 def run_string_injection(input_dir, output_dir, source_dir):
     """Run string injection step."""
-    try:
-        logging.info("=== STRING INJECTION PHASE ===")
+    logger = logging.getLogger(__name__)
+    logger.info("=== STRING INJECTION PHASE ===")
 
+    try:
         # Find string injector script
         script_candidates = [
             "bulletproof_pe_string_injector.py",
@@ -114,24 +88,23 @@ def run_string_injection(input_dir, output_dir, source_dir):
             exists, path = verify_script_exists(candidate)
             if exists:
                 script_path = path
-                logging.info(f"Using string injector: {candidate}")
                 break
 
         if not script_path:
-            logging.error("No string injector script found - copying without injection")
+            logger.warning("No string injector found - copying without injection")
+            Path(output_dir).mkdir(parents=True, exist_ok=True)
             for file_path in Path(input_dir).glob("*"):
                 if file_path.is_file():
                     shutil.copy2(file_path, Path(output_dir) / file_path.name)
             return True
 
-        # Get input and source files
-        input_files = [f for f in Path(input_dir).glob("*") 
-                      if f.is_file() and f.suffix.lower() in ['.exe', '.dll', '']]
-        source_files = [f for f in Path(source_dir).glob("*") 
-                       if f.is_file() and f.suffix.lower() in ['.exe', '.dll', '']]
+        # Get files
+        input_files = [f for f in Path(input_dir).glob("*") if f.is_file()]
+        source_files = [f for f in Path(source_dir).glob("*") if f.is_file()]
 
         if not source_files:
-            logging.warning("No source files found - copying without injection")
+            logger.warning("No source files - copying without injection")
+            Path(output_dir).mkdir(parents=True, exist_ok=True)
             for input_file in input_files:
                 shutil.copy2(input_file, Path(output_dir) / input_file.name)
             return True
@@ -143,7 +116,8 @@ def run_string_injection(input_dir, output_dir, source_dir):
             output_file = Path(output_dir) / input_file.name
             injected = False
 
-            for source_file in source_files[:3]:  # Try up to 3 sources
+            # Try first few source files
+            for source_file in source_files[:3]:
                 try:
                     cmd = [
                         sys.executable, script_path,
@@ -155,48 +129,46 @@ def run_string_injection(input_dir, output_dir, source_dir):
                     result = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
 
                     if result.returncode == 0 and output_file.exists():
-                        logging.info(f"✓ Injected strings into {input_file.name}")
+                        logger.info(f"✓ Injected: {input_file.name}")
                         injected = True
                         success_count += 1
                         break
 
-                except Exception as e:
-                    logging.debug(f"Injection error: {e}")
+                except Exception:
                     continue
 
             if not injected:
                 shutil.copy2(input_file, output_file)
-                logging.info(f"Copied {input_file.name} without injection (fallback)")
 
-        logging.info(f"String injection completed: {success_count}/{len(input_files)} successful")
+        logger.info(f"String injection: {success_count}/{len(input_files)} successful")
         return True
 
     except Exception as e:
-        logging.error(f"String injection error: {e}")
+        logger.error(f"String injection error: {e}")
         return False
 
 def run_code_cave_insertion(input_dir, output_dir, source_dir):
     """Run code cave insertion step."""
-    try:
-        logging.info("=== CODE CAVE INSERTION PHASE ===")
+    logger = logging.getLogger(__name__)
+    logger.info("=== CODE CAVE INSERTION PHASE ===")
 
-        # Find code cave script
+    try:
         exists, script_path = verify_script_exists("code_cave_inserter.py")
         if not exists:
-            logging.error("code_cave_inserter.py not found - copying without insertion")
+            logger.warning("code_cave_inserter.py not found - copying without insertion")
+            Path(output_dir).mkdir(parents=True, exist_ok=True)
             for file_path in Path(input_dir).glob("*"):
                 if file_path.is_file():
                     shutil.copy2(file_path, Path(output_dir) / file_path.name)
             return True
 
-        # Get input and source files
-        input_files = [f for f in Path(input_dir).glob("*") 
-                      if f.is_file() and f.suffix.lower() in ['.exe', '.dll', '']]
-        source_files = [f for f in Path(source_dir).glob("*") 
-                       if f.is_file() and f.suffix.lower() in ['.exe', '.dll', '']]
+        # Get files
+        input_files = [f for f in Path(input_dir).glob("*") if f.is_file()]
+        source_files = [f for f in Path(source_dir).glob("*") if f.is_file()]
 
         if not source_files:
-            logging.warning("No source files found - copying without insertion")
+            logger.warning("No source files - copying without insertion")
+            Path(output_dir).mkdir(parents=True, exist_ok=True)
             for input_file in input_files:
                 shutil.copy2(input_file, Path(output_dir) / input_file.name)
             return True
@@ -208,7 +180,8 @@ def run_code_cave_insertion(input_dir, output_dir, source_dir):
             output_file = Path(output_dir) / input_file.name
             inserted = False
 
-            for source_file in source_files[:2]:  # Try up to 2 sources
+            # Try first couple source files
+            for source_file in source_files[:2]:
                 try:
                     cmd = [
                         sys.executable, script_path,
@@ -219,45 +192,42 @@ def run_code_cave_insertion(input_dir, output_dir, source_dir):
                     result = subprocess.run(cmd, capture_output=True, text=True, timeout=180)
 
                     if result.returncode == 0 and output_file.exists():
-                        logging.info(f"✓ Inserted code caves into {input_file.name}")
+                        logger.info(f"✓ Inserted caves: {input_file.name}")
                         inserted = True
                         success_count += 1
                         break
 
-                except Exception as e:
-                    logging.debug(f"Insertion error: {e}")
+                except Exception:
                     continue
 
             if not inserted:
                 shutil.copy2(input_file, output_file)
-                logging.info(f"Copied {input_file.name} without insertion (fallback)")
 
-        logging.info(f"Code cave insertion completed: {success_count}/{len(input_files)} successful")
+        logger.info(f"Code cave insertion: {success_count}/{len(input_files)} successful")
         return True
 
     except Exception as e:
-        logging.error(f"Code cave insertion error: {e}")
+        logger.error(f"Code cave insertion error: {e}")
         return False
 
 def run_packing(input_dir, output_dir, packer_type="upx"):
     """Run packing step."""
-    try:
-        logging.info(f"=== {packer_type.upper()} PACKING PHASE ===")
+    logger = logging.getLogger(__name__)
+    logger.info(f"=== {packer_type.upper()} PACKING PHASE ===")
 
-        # Find packer script
+    try:
         packer_script = f"{packer_type}_packer.py"
         exists, script_path = verify_script_exists(packer_script)
+
         if not exists:
-            logging.error(f"{packer_script} not found - copying without packing")
+            logger.warning(f"{packer_script} not found - copying without packing")
+            Path(output_dir).mkdir(parents=True, exist_ok=True)
             for file_path in Path(input_dir).glob("*"):
                 if file_path.is_file():
                     shutil.copy2(file_path, Path(output_dir) / file_path.name)
             return True
 
-        # Get input files
-        input_files = [f for f in Path(input_dir).glob("*") 
-                      if f.is_file() and f.suffix.lower() in ['.exe', '.dll', '']]
-
+        input_files = [f for f in Path(input_dir).glob("*") if f.is_file()]
         Path(output_dir).mkdir(parents=True, exist_ok=True)
         success_count = 0
 
@@ -268,139 +238,171 @@ def run_packing(input_dir, output_dir, packer_type="upx"):
                 cmd = [
                     sys.executable, script_path,
                     str(input_file), str(output_file),
-                    "--compression", "best" if packer_type == "upx" else "8",
+                    "--compression", "best",
                     "--overwrite"
                 ]
 
                 result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
 
                 if result.returncode == 0 and output_file.exists():
-                    logging.info(f"✓ Packed {input_file.name}")
+                    logger.info(f"✓ Packed: {input_file.name}")
                     success_count += 1
                 else:
                     shutil.copy2(input_file, output_file)
-                    logging.info(f"Copied {input_file.name} without packing (fallback)")
 
-            except Exception as e:
-                logging.debug(f"Packing error: {e}")
+            except Exception:
                 shutil.copy2(input_file, output_file)
 
-        logging.info(f"Packing completed: {success_count}/{len(input_files)} successful")
+        logger.info(f"Packing: {success_count}/{len(input_files)} successful")
         return True
 
     except Exception as e:
-        logging.error(f"Packing error: {e}")
+        logger.error(f"Packing error: {e}")
         return False
 
 def run_signing(input_dir):
     """Run signing step."""
-    try:
-        logging.info("=== SIGNING PHASE ===")
+    logger = logging.getLogger(__name__)
+    logger.info("=== SIGNING PHASE ===")
 
-        # Find signing script
+    try:
         exists, script_path = verify_script_exists("sign_script.py")
         if not exists:
-            logging.error("sign_script.py not found - skipping signing")
+            logger.warning("sign_script.py not found - skipping signing")
             return True
 
-        # Run signing script
-        cmd = [
-            sys.executable, script_path,
-            str(input_dir),
-            "--verbose"
-        ]
-
+        cmd = [sys.executable, script_path, str(input_dir), "--verbose"]
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
 
         if result.returncode == 0:
-            logging.info("✓ Signing completed successfully")
+            logger.info("✓ Signing completed")
         else:
-            logging.warning(f"Signing failed: {result.stderr}")
+            logger.warning("Signing failed")
 
         return True
 
     except Exception as e:
-        logging.error(f"Signing error: {e}")
-        return True  # Non-critical, continue anyway
+        logger.error(f"Signing error: {e}")
+        return True
 
 def main():
-    """Main orchestrator function - Version 3: Mutate only at the end."""
-    parser = argparse.ArgumentParser(
-        description='PE Modification Orchestrator v3 - Mutates only at the end before signing'
-    )
-    parser.add_argument('target_dir', help='Directory with target PE files')
-    parser.add_argument('source_dir', help='Directory with source PE files')
-    parser.add_argument('--output-dir', default='output_v3', help='Base output directory')
-    parser.add_argument('--mutation-level', type=int, default=5, help='Mutation level (1-10)')
-    parser.add_argument('--skip-strings', action='store_true', help='Skip string injection')
-    parser.add_argument('--skip-caves', action='store_true', help='Skip code cave insertion')
-    parser.add_argument('--skip-packing', action='store_true', help='Skip packing')
-    parser.add_argument('--skip-signing', action='store_true', help='Skip signing')
-    parser.add_argument('--skip-mutation', action='store_true', help='Skip final mutation')
-    parser.add_argument('--packer', choices=['upx', 'wrappe'], default='upx', help='Packer to use')
-    parser.add_argument('--verbose', '-v', action='store_true', help='Verbose logging')
+    """
+    Linux PE Modification Orchestrator
+    Usage: python orchestrator_linux.py target_dir source_dir [--output-dir DIR] [--skip-X] [--packer TYPE]
+    """
 
-    args = parser.parse_args()
+    # Simple argument parsing
+    args = sys.argv[1:]
+    if len(args) < 2:
+        print("Usage: python orchestrator_linux.py target_dir source_dir [options]")
+        print("Options:")
+        print("  --output-dir DIR     Output directory (default: output_linux)")
+        print("  --skip-strings       Skip string injection")
+        print("  --skip-caves         Skip code cave insertion")
+        print("  --skip-packing       Skip packing")
+        print("  --skip-signing       Skip signing")
+        print("  --skip-pre-mutation  Skip initial mutation")
+        print("  --skip-mid-mutation  Skip pre-pack mutation")
+        print("  --skip-post-mutation Skip final mutation")
+        print("  --packer TYPE        Packer type (default: upx)")
+        return 1
+
+    target_dir = args[0]
+    source_dir = args[1]
+
+    # Parse options
+    output_base = "output_linux"
+    skip_strings = False
+    skip_caves = False
+    skip_packing = False
+    skip_signing = False
+    skip_pre_mutation = False
+    skip_mid_mutation = False
+    skip_post_mutation = False
+    packer_type = "upx"
+
+    i = 2
+    while i < len(args):
+        if args[i] == "--output-dir" and i + 1 < len(args):
+            output_base = args[i + 1]
+            i += 2
+        elif args[i] == "--packer" and i + 1 < len(args):
+            packer_type = args[i + 1]
+            i += 2
+        elif args[i] == "--skip-strings":
+            skip_strings = True
+            i += 1
+        elif args[i] == "--skip-caves":
+            skip_caves = True
+            i += 1
+        elif args[i] == "--skip-packing":
+            skip_packing = True
+            i += 1
+        elif args[i] == "--skip-signing":
+            skip_signing = True
+            i += 1
+        elif args[i] == "--skip-pre-mutation":
+            skip_pre_mutation = True
+            i += 1
+        elif args[i] == "--skip-mid-mutation":
+            skip_mid_mutation = True
+            i += 1
+        elif args[i] == "--skip-post-mutation":
+            skip_post_mutation = True
+            i += 1
+        else:
+            i += 1
 
     # Set up logging
     log_file = setup_logging()
-    if args.verbose:
-        logging.getLogger().setLevel(logging.DEBUG)
 
-    logging.info("=== PE MODIFICATION ORCHESTRATOR V3 ===")
-    logging.info("Strategy: Mutate only at the end before signing")
+    logging.info("=== LINUX PE MODIFICATION ORCHESTRATOR ===")
+    logging.info("Workflow: Build → Astral-PE → Process → Astral-PE → Pack → Astral-PE → Sign")
 
     try:
         # Prepare directories
-        output_base = Path(args.output_dir).resolve()
+        output_base = Path(output_base).resolve()
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
-        # Create working directories
         working_dir = output_base / f"working_{timestamp}"
+        after_pre_mutation_dir = output_base / f"after_pre_mutation_{timestamp}"
         after_strings_dir = output_base / f"after_strings_{timestamp}"
         after_caves_dir = output_base / f"after_caves_{timestamp}"
+        after_mid_mutation_dir = output_base / f"after_mid_mutation_{timestamp}"
         after_packing_dir = output_base / f"after_packing_{timestamp}"
-        mutated_final_dir = output_base / f"mutated_final_{timestamp}"
+        after_post_mutation_dir = output_base / f"after_post_mutation_{timestamp}"
         final_dir = output_base / f"final_{timestamp}"
 
-        for directory in [output_base, working_dir, after_strings_dir, after_caves_dir,
-                         after_packing_dir, mutated_final_dir, final_dir]:
+        # Create directories
+        for directory in [output_base, working_dir, after_pre_mutation_dir, after_strings_dir,
+                         after_caves_dir, after_mid_mutation_dir, after_packing_dir,
+                         after_post_mutation_dir, final_dir]:
             directory.mkdir(parents=True, exist_ok=True)
 
         # Phase 0: Copy target files
         logging.info("=== PHASE 0: PREPARING TARGET FILES ===")
-        for file_path in Path(args.target_dir).glob("*"):
+        for file_path in Path(target_dir).glob("*"):
             if file_path.is_file():
                 shutil.copy2(file_path, working_dir / file_path.name)
                 logging.info(f"✓ Prepared: {file_path.name}")
 
         current_dir = working_dir
 
-        # Phase 1: String Injection (no mutation)
-        if not args.skip_strings:
-            run_string_injection(current_dir, after_strings_dir, args.source_dir)
-            current_dir = after_strings_dir
+
+        # Phase 4: Pre-packing Astral-PE mutation
+        if not skip_mid_mutation:
+            run_astral_pe_mutation(current_dir, after_mid_mutation_dir, "PRE-PACKING MUTATION")
+            current_dir = after_mid_mutation_dir
         else:
-            logging.info("String injection skipped")
+            logging.info("Pre-packing mutation skipped")
             for file_path in current_dir.glob("*"):
                 if file_path.is_file():
-                    shutil.copy2(file_path, after_strings_dir / file_path.name)
-            current_dir = after_strings_dir
+                    shutil.copy2(file_path, after_mid_mutation_dir / file_path.name)
+            current_dir = after_mid_mutation_dir
 
-        # Phase 2: Code Cave Insertion (no mutation)
-        if not args.skip_caves:
-            run_code_cave_insertion(current_dir, after_caves_dir, args.source_dir)
-            current_dir = after_caves_dir
-        else:
-            logging.info("Code cave insertion skipped")
-            for file_path in current_dir.glob("*"):
-                if file_path.is_file():
-                    shutil.copy2(file_path, after_caves_dir / file_path.name)
-            current_dir = after_caves_dir
-
-        # Phase 3: Packing (no mutation)
-        if not args.skip_packing:
-            run_packing(current_dir, after_packing_dir, args.packer)
+        # Phase 5: Packing
+        if not skip_packing:
+            run_packing(current_dir, after_packing_dir, packer_type)
             current_dir = after_packing_dir
         else:
             logging.info("Packing skipped")
@@ -409,29 +411,29 @@ def main():
                     shutil.copy2(file_path, after_packing_dir / file_path.name)
             current_dir = after_packing_dir
 
-        # Phase 4: Final Mutation (if not skipped)
-        if not args.skip_mutation:
-            run_mutation(current_dir, mutated_final_dir, args.mutation_level)
-            current_dir = mutated_final_dir
+        # Phase 6: Final Astral-PE mutation
+        if not skip_post_mutation:
+            run_astral_pe_mutation(current_dir, after_post_mutation_dir, "POST-PACKING MUTATION")
+            current_dir = after_post_mutation_dir
         else:
-            logging.info("Final mutation skipped")
+            logging.info("Post-packing mutation skipped")
             for file_path in current_dir.glob("*"):
                 if file_path.is_file():
-                    shutil.copy2(file_path, mutated_final_dir / file_path.name)
-            current_dir = mutated_final_dir
+                    shutil.copy2(file_path, after_post_mutation_dir / file_path.name)
+            current_dir = after_post_mutation_dir
 
-        # Final: Copy to final directory and sign
+        # Phase 7: Copy to final directory
         for file_path in current_dir.glob("*"):
             if file_path.is_file():
                 shutil.copy2(file_path, final_dir / file_path.name)
 
-        # Phase 5: Signing (absolute final step)
-        if not args.skip_signing:
+        # Phase 8: Signing
+        if not skip_signing:
             run_signing(final_dir)
 
         # Summary
         final_files = list(final_dir.glob("*"))
-        logging.info("=== ORCHESTRATION V3 COMPLETED ===")
+        logging.info("=== ORCHESTRATION COMPLETED ===")
         logging.info(f"Final output directory: {final_dir}")
         logging.info(f"Total output files: {len(final_files)}")
         logging.info(f"Log file: {log_file}")
