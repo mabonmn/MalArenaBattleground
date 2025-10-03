@@ -53,13 +53,13 @@ WORKDIR /opt/defender/
 ENV PATH="/opt/venv/bin:$PATH"
 ENV PYTHONPATH="/opt/defender"
 
-# Ensemble configuration - Lower threshold for higher TPR
-ENV DF_ENSEMBLE_THRESHOLD=.85
+# Ensemble configuration - Lower threshold for higher TPR with abstaining models
+ENV DF_ENSEMBLE_THRESHOLD=.65
 ENV DF_ENSEMBLE_REQUIRE_2OF3=false
 
-# MalConv model configuration - Lower threshold, higher weight (best performer)
+# MalConv model configuration - Lower threshold for higher TPR (primary detector now)
 ENV DF_MALCONV_WEIGHTS=models/malconv_model.pt
-ENV DF_MALCONV_THRESH=0.99
+ENV DF_MALCONV_THRESH=0.85
 ENV DF_MALCONV_MAX_BYTES=1048576
 ENV DF_MALCONV_VOTE_WEIGHT=1.5
 
@@ -67,7 +67,7 @@ ENV DF_MALCONV_VOTE_WEIGHT=1.5
 ENV DF_LIGHTGBM_MODEL_PATH=models/LGBM_model.txt
 ENV DF_LIGHTGBM_THRESH=.825
 ENV DF_LIGHTGBM_MAX_BYTES=1048576
-ENV DF_LIGHTGBM_VOTE_WEIGHT=.25
+ENV DF_LIGHTGBM_VOTE_WEIGHT=.5
 ENV DF_LIGHTGBM_USE_ENHANCED=false
 
 # LightGBM 800000 samples, bigger model trained on 800,000 samples TURNED OFF RN

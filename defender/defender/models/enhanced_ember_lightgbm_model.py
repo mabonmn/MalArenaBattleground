@@ -350,7 +350,7 @@ class EnhancedEmberLightGBMModel:
         print(f"LIEF support: {'Available' if HAVE_LIEF else 'Not available'}")
     
     def _extract_ember_features(self, bytez: bytes) -> np.ndarray:
-        """Extract EMBER features with fallback capability."""
+        """Extract EMBER features - abstain if thrember fails."""
         start_time = time.time()
         
         # Try primary extractor (thrember) first
@@ -362,30 +362,20 @@ class EnhancedEmberLightGBMModel:
                 self.primary_extractions += 1
                 return features_array
             except Exception as e:
-                if "'CertificateStore' object is not subscriptable" in str(e):
-                    # Known thrember issue - try fallback
-                    pass
-                else:
-                    print(f"Primary feature extraction failed: {e}")
+                self.failed_extractions += 1
+                print(f"Thrember feature extraction failed: {e} - model will abstain")
+                raise Exception(f"LGBM abstaining due to feature extraction failure: {e}")
         
-        # Try fallback extractor
-        if self.fallback_extractor is not None:
-            try:
-                features_array = self.fallback_extractor.extract_ember_compatible_features(bytez, self.model.num_feature())
-                self.fallback_extractions += 1
-                return features_array
-            except Exception as e:
-                print(f"Fallback feature extraction failed: {e}")
-        
-        # Last resort - zero vector
+        # No primary extractor available
         self.failed_extractions += 1
-        print("All feature extraction methods failed, using zero vector")
-        return np.zeros(self.model.num_feature(), dtype=np.float32)
+        print("No thrember extractor available - model will abstain")
+        raise Exception("LGBM abstaining - no thrember extractor available")
     
     def predict(self, bytez: bytes) -> int:
         """
         Predict malware classification for given bytes.
         Returns 0 for benign, 1 for malicious.
+        Raises exception to abstain if feature extraction fails.
         """
         start_time = time.time()
         self.prediction_count += 1
@@ -395,7 +385,7 @@ class EnhancedEmberLightGBMModel:
             if len(bytez) > self.max_bytes:
                 bytez = bytez[:self.max_bytes]
             
-            # Extract features
+            # Extract features (will raise exception if thrember fails)
             features = self._extract_ember_features(bytez)
             
             # Check feature dimensions and pad/truncate if necessary
@@ -414,7 +404,7 @@ class EnhancedEmberLightGBMModel:
             if features.ndim == 1:
                 features = features.reshape(1, -1)
             
-            # Get prediction probability (disable shape check to handle dimension mismatches gracefully)
+            # Get prediction probability
             prob = self.model.predict(features, num_iteration=self.model.best_iteration, predict_disable_shape_check=True)[0]
             
             # Apply threshold
@@ -423,9 +413,8 @@ class EnhancedEmberLightGBMModel:
             return prediction
             
         except Exception as e:
-            print(f"Prediction error: {e}")
-            # Default to benign on error (safer for FPR requirement)
-            return 0
+            # Re-raise exception to signal abstention to ensemble
+            raise e
     
     def get_extraction_stats(self) -> Dict[str, Union[int, float]]:
         """Get feature extraction statistics."""

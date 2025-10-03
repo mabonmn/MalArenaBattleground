@@ -70,8 +70,8 @@ class Ensemble:
                 else:
                     logging.warning(f"Model '{name}' returned invalid prediction: {pred}; treating as abstain")
             except Exception as e:
-                # Abstain on failure to reduce FPR spikes
-                logging.warning(f"Model '{name}' prediction failed, abstaining: {e}")
+                # Model abstained (especially LGBM when thrember fails) - this is expected
+                logging.info(f"Model '{name}' abstained: {e}")
 
         if total_weight == 0:
             # All models abstained/failed — bias to benign to reduce FPR

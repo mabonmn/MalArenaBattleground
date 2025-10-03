@@ -108,7 +108,7 @@ class EmberLightGBMModel:
         self.model_inference_time = 0.0
     
     def _extract_ember_features(self, bytez: bytes) -> np.ndarray:
-        """Extract EMBER features from raw bytes."""
+        """Extract EMBER features from raw bytes - abstain if fails."""
         start_time = time.time()
         
         try:
@@ -123,11 +123,10 @@ class EmberLightGBMModel:
             return features_array
             
         except Exception as e:
-            # If feature extraction fails, return zero vector
-            print(f"Feature extraction failed: {e}")
+            # If feature extraction fails, abstain
+            print(f"Thrember feature extraction failed: {e} - model will abstain")
             self.feature_extraction_time += time.time() - start_time
-            # Return zero vector with expected number of features
-            return np.zeros(self.model.num_feature(), dtype=np.float32)
+            raise Exception(f"LGBM abstaining due to feature extraction failure: {e}")
     
     def predict(self, bytez: bytes) -> int:
         """
@@ -168,10 +167,9 @@ class EmberLightGBMModel:
             return prediction
             
         except Exception as e:
-            print(f"Prediction error: {e}")
-            # Default to benign on error (safer for FPR requirement)
+            # Re-raise to signal abstention to ensemble
             self.total_prediction_time += time.time() - start_time
-            return 0
+            raise e
     
     def get_prediction_stats(self) -> Dict[str, float]:
         """Get performance statistics."""
