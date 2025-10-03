@@ -5,6 +5,7 @@ Flask==3.0.0
 gevent==23.9.1
 envparse==0.2.0
 numpy==1.26.0
+lief==0.12.3
 
 # PyTorch for MalConv (CPU-only for container efficiency)
 torch==2.1.0+cpu

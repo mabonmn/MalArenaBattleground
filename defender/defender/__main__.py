@@ -4,6 +4,7 @@ from defender.apps import create_app
 from defender.models.malconv_model import MalConvTorchModel
 from defender.models.ember_lightgbm_model import EmberLightGBMModel
 from defender.models.enhanced_ember_lightgbm_model import EnhancedEmberLightGBMModel
+from defender.models.stringcnn_model import StringCNNModel
 
 from defender.models.ensemble import Ensemble
 
@@ -26,7 +27,7 @@ if __name__ == "__main__":
     lightgbm_weight = envparse.env("DF_LIGHTGBM_VOTE_WEIGHT", cast=float, default=1.0)  
     lightgbm_use_enhanced = envparse.env("DF_LIGHTGBM_USE_ENHANCED", cast=bool, default=True)
 
-    # EMBER LightGBM 800k samples 
+    # EMBER LightGBM 800,000 this was trained on 800,000 samples, not 800k sized samples
     lightgbm800k_model_path = envparse.env("DF_LIGHTGBM800K_MODEL_PATH", cast=str, default="models/LGBM_model800k.txt")
     lightgbm800k_threshold = envparse.env("DF_LIGHTGBM800K_THRESH", cast=float, default=None)
     lightgbm800k_max_bytes = envparse.env("DF_LIGHTGBM800K_MAX_BYTES", cast=int, default=819200)
@@ -39,6 +40,16 @@ if __name__ == "__main__":
     ensemble = Ensemble(threshold=ensemble_threshold)
     
     # Initialize and add MalConv model
+    
+    # StringCNN-specific config
+    stringcnn_weights = envparse.env("DF_STRINGCNN_WEIGHTS", cast=str, default="models/cnn_strings_best.pt")
+    stringcnn_threshold = envparse.env("DF_STRINGCNN_THRESH", cast=float, default=0.50)
+    stringcnn_max_bytes = envparse.env("DF_STRINGCNN_MAX_BYTES", cast=int, default=1048576)
+
+    # CUSTOMIZE: app and model instances
+    device = 'cpu'  # CPU only inside container per challenge limits
+    
+    # Initialize MalConv model
     malconv_path_abs = malconv_weights
     if not malconv_path_abs.startswith(os.sep):
         malconv_path_abs = os.path.join(os.path.dirname(os.path.abspath(__file__)), malconv_path_abs)
@@ -109,6 +120,24 @@ if __name__ == "__main__":
     
     print(f"🏆 Ensemble ready with {len(ensemble.models)} models using weighted voting")
     
+    # Initialize and add StringCNN model to ensemble
+    stringcnn_path_abs = stringcnn_weights
+    if not stringcnn_path_abs.startswith(os.sep):
+        stringcnn_path_abs = os.path.join(os.path.dirname(os.path.abspath(__file__)), stringcnn_path_abs)
+
+    if os.path.isfile(stringcnn_path_abs):
+        stringcnn_weight = envparse.env("DF_STRINGCNN_VOTE_WEIGHT", cast=float, default=1.0)
+        stringcnn_model = StringCNNModel(
+            weights_path=stringcnn_path_abs,
+            max_bytes=stringcnn_max_bytes,
+            threshold=stringcnn_threshold,
+            device=device,
+        )
+        ensemble.add_model("stringcnn", stringcnn_model, weight=stringcnn_weight)
+        print(f"✓ Added StringCNN model with weight {stringcnn_weight}")
+    else:
+        print(f"⚠ StringCNN model not found at {stringcnn_path_abs}, skipping")
+
     # Create app with ensemble
     app = create_app(ensemble)
 

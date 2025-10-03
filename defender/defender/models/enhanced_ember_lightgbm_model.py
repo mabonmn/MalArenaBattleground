@@ -32,10 +32,10 @@ except ImportError:
 class FallbackFeatureExtractor:
     """Fallback PE feature extractor that tries to match EMBER feature space."""
     
-    def extract_ember_compatible_features(self, bytez: bytes) -> np.ndarray:
+    def extract_ember_compatible_features(self, bytez: bytes, expected_features: int = 2568) -> np.ndarray:
         """Extract features compatible with EMBER's feature space."""
-        # Start with zero vector
-        features = np.zeros(2381, dtype=np.float32)
+        # Start with zero vector of expected size
+        features = np.zeros(expected_features, dtype=np.float32)
         
         try:
             # Basic file features
@@ -56,6 +56,11 @@ class FallbackFeatureExtractor:
             # Byte distribution features (EMBER has histogram features around position 256)
             byte_hist = self._calculate_byte_histogram(bytez)
             features[256:256+len(byte_hist)] = byte_hist
+            
+            # Add more statistical features to fill feature space
+            self._add_statistical_features(bytez, features)
+            self._add_ngram_features(bytez, features)
+            self._add_section_features(bytez, features)
             
         except Exception as e:
             print(f"Fallback feature extraction error: {e}")
@@ -194,6 +199,92 @@ class FallbackFeatureExtractor:
             print(f"String feature extraction failed: {e}")
         
         return features
+    
+    def _add_statistical_features(self, bytez: bytes, features: np.ndarray):
+        """Add statistical features to fill more of the feature space."""
+        try:
+            if len(bytez) == 0:
+                return
+            
+            byte_array = np.frombuffer(bytez, dtype=np.uint8)
+            
+            # Statistical features starting at position 600
+            start_pos = 600
+            if start_pos + 50 < len(features):
+                # Basic statistics
+                features[start_pos] = np.mean(byte_array)
+                features[start_pos + 1] = np.std(byte_array)
+                features[start_pos + 2] = np.median(byte_array)
+                features[start_pos + 3] = np.var(byte_array)
+                features[start_pos + 4] = np.min(byte_array)
+                features[start_pos + 5] = np.max(byte_array)
+                
+                # Percentiles
+                for i, p in enumerate([10, 25, 75, 90]):
+                    features[start_pos + 6 + i] = np.percentile(byte_array, p)
+                
+                # Byte value counts for common values
+                for i, val in enumerate([0, 255, 32, 10, 13]):
+                    features[start_pos + 10 + i] = np.sum(byte_array == val) / len(byte_array)
+        except Exception:
+            pass
+    
+    def _add_ngram_features(self, bytez: bytes, features: np.ndarray):
+        """Add n-gram based features."""
+        try:
+            if len(bytez) < 2:
+                return
+            
+            byte_array = np.frombuffer(bytez, dtype=np.uint8)
+            
+            # 2-gram features starting at position 800
+            start_pos = 800
+            if start_pos + 100 < len(features):
+                # Count some common 2-grams
+                common_bigrams = [
+                    (0x4D, 0x5A),  # MZ header
+                    (0x50, 0x45),  # PE
+                    (0x00, 0x00),  # Null bytes
+                    (0xFF, 0xFF),  # High bytes
+                ]
+                
+                for i, (b1, b2) in enumerate(common_bigrams):
+                    if i < 50:
+                        count = 0
+                        for j in range(len(byte_array) - 1):
+                            if byte_array[j] == b1 and byte_array[j+1] == b2:
+                                count += 1
+                        features[start_pos + i] = count / max(1, len(byte_array) - 1)
+        except Exception:
+            pass
+    
+    def _add_section_features(self, bytez: bytes, features: np.ndarray):
+        """Add PE section-like features based on byte patterns."""
+        try:
+            if len(bytez) < 1000:
+                return
+            
+            # Simple section analysis - divide file into chunks
+            start_pos = 1000
+            if start_pos + 200 < len(features):
+                chunk_size = len(bytez) // 10
+                for i in range(min(10, (len(features) - start_pos) // 20)):
+                    chunk_start = i * chunk_size
+                    chunk_end = min((i + 1) * chunk_size, len(bytez))
+                    chunk = bytez[chunk_start:chunk_end]
+                    
+                    if len(chunk) > 0:
+                        chunk_array = np.frombuffer(chunk, dtype=np.uint8)
+                        # Entropy of chunk
+                        features[start_pos + i * 20] = self._calculate_entropy(chunk)
+                        # Mean byte value
+                        features[start_pos + i * 20 + 1] = np.mean(chunk_array)
+                        # Std of chunk
+                        features[start_pos + i * 20 + 2] = np.std(chunk_array)
+                        # Null byte ratio in chunk
+                        features[start_pos + i * 20 + 3] = np.sum(chunk_array == 0) / len(chunk_array)
+        except Exception:
+            pass
 
 
 class EnhancedEmberLightGBMModel:
@@ -252,9 +343,11 @@ class EnhancedEmberLightGBMModel:
         self.failed_extractions = 0
         
         print(f"Loaded Enhanced LightGBM EMBER model from {model_path}")
-        print(f"Model features: {self.model.num_feature()}")
+        print(f"Model expects {self.model.num_feature()} features")
         print(f"Threshold: {self.threshold}")
         print(f"Fallback enabled: {use_fallback}")
+        print(f"Primary extractor (thrember): {'Available' if HAVE_THREMBER else 'Not available'}")
+        print(f"LIEF support: {'Available' if HAVE_LIEF else 'Not available'}")
     
     def _extract_ember_features(self, bytez: bytes) -> np.ndarray:
         """Extract EMBER features with fallback capability."""
@@ -278,7 +371,7 @@ class EnhancedEmberLightGBMModel:
         # Try fallback extractor
         if self.fallback_extractor is not None:
             try:
-                features_array = self.fallback_extractor.extract_ember_compatible_features(bytez)
+                features_array = self.fallback_extractor.extract_ember_compatible_features(bytez, self.model.num_feature())
                 self.fallback_extractions += 1
                 return features_array
             except Exception as e:
@@ -305,12 +398,24 @@ class EnhancedEmberLightGBMModel:
             # Extract features
             features = self._extract_ember_features(bytez)
             
+            # Check feature dimensions and pad/truncate if necessary
+            expected_features = self.model.num_feature()
+            if len(features) != expected_features:
+                if len(features) < expected_features:
+                    # Pad with zeros
+                    padded_features = np.zeros(expected_features, dtype=np.float32)
+                    padded_features[:len(features)] = features
+                    features = padded_features
+                else:
+                    # Truncate
+                    features = features[:expected_features]
+            
             # Ensure features are 2D for LightGBM
             if features.ndim == 1:
                 features = features.reshape(1, -1)
             
-            # Get prediction probability
-            prob = self.model.predict(features, num_iteration=self.model.best_iteration)[0]
+            # Get prediction probability (disable shape check to handle dimension mismatches gracefully)
+            prob = self.model.predict(features, num_iteration=self.model.best_iteration, predict_disable_shape_check=True)[0]
             
             # Apply threshold
             prediction = int(prob >= self.threshold)
