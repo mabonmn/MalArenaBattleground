@@ -1,0 +1,44 @@
+=== EVALUATION SUMMARY ===,,,
+
+AVERAGE ACCURACIES,,,
+Goodware Average,68.6%,across 7 folders,
+Malware Average,96.4%,across 11 folders,
+Overall Average,82.5%,,
+
+OVERALL METRICS,,,
+Total Samples,172,,
+Overall Accuracy,89.5%,,
+Precision,88.3%,,
+Recall (TPR),96.4%,,
+F1-Score,92.2%,,
+False Pos Rate,22.6%,,
+Avg Time/Sample,1.65s,,
+
+CONFUSION MATRIX,,,
+True Positives,106,Malware correctly identified,
+False Positives,14,Goodware incorrectly flagged,
+True Negatives,48,Goodware correctly identified,
+False Negatives,4,Malware missed,
+
+==================================================,,,
+
+PER-FOLDER BREAKDOWN,,,
+Folder,Correct,Total,Accuracy
+goodware/1,8,10,0.800
+goodware/2,10,10,1.000
+goodware/3,10,10,1.000
+goodware/4,6,10,0.600
+goodware/5,4,10,0.400
+goodware/6,10,10,1.000
+goodware/7,0,2,0.000
+malware/1,10,10,1.000
+malware/10,10,10,1.000
+malware/11,7,10,0.700
+malware/2,10,10,1.000
+malware/3,10,10,1.000
+malware/4,9,10,0.900
+malware/5,10,10,1.000
+malware/6,10,10,1.000
+malware/7,10,10,1.000
+malware/8,10,10,1.000
+malware/9,10,10,1.000
