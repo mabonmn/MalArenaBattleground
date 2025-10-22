@@ -7,7 +7,7 @@ Analyze and classify `.exe` files for malware using the `mabonmn/malarena-defend
 ## Pull the Docker Image
 
 ```
-docker pull mabonmn/malarena-defender:82bc78d78970aec7a5b50485f367f3e7e02c65c1
+docker pull mabonmn/malarena-defender:latest
 ```
 
 
@@ -15,7 +15,7 @@ docker pull mabonmn/malarena-defender:82bc78d78970aec7a5b50485f367f3e7e02c65c1
 
 ## Run the Malware Classifier Container
 ```
-docker run --rm -p 8080:8080 mabonmn/malarena-defender:82bc78d78970aec7a5b50485f367f3e7e02c65c1
+ docker run --rm -it -p 8080:8080 -m 1g mabonmn/malarena-defender:latest
 ```
 
 - Exposes REST API at `localhost:8080`
@@ -25,10 +25,7 @@ docker run --rm -p 8080:8080 mabonmn/malarena-defender:82bc78d78970aec7a5b50485f
 
 ## Scan a Single `.exe` File
 ```
-curl -s -X POST
--H "Content-Type: application/octet-stream"
---data-binary @/path/to/file.exe
-http://127.0.0.1:8080/
+curl -XPOST --data-binary @yourfile.exe http://127.0.0.1:8080/ -H "Content-Type: application/octet-stream
 ```
 
 
@@ -41,16 +38,14 @@ http://127.0.0.1:8080/
 if you wish to process multiple samples at once, you can run this shell script:
 ```
 DIR="/path/to/input/files"
-OUT"/path/to/output/results.csv"
+OUT="/path/to/output/results.csv"
 URL="http://127.0.0.1:8080/"
 
 printf "path,result,status,error\n" > "$OUT"
-
 find "$DIR" -type f -print0 | while IFS= read -r -d '' f; do
-resp=$(curl -sS --max-time 20 -H "Content-Type: application/octet-stream" --data-binary @"$f" "$URL")
-if [ $? -eq 0 ]; then
-    # crude JSON extract of {"result":X} without jq
-    res=$(printf "%s" "$resp" | sed -n 's/.*"result":[[:space:]]*\\([0-9]\\{1,\\}\\).*/\\1/p')
+  resp=$(curl -sS --max-time 20 -H "Content-Type: application/octet-stream" --data-binary @"$f" "$URL")
+  if [ $? -eq 0 ]; then
+    res=$(printf "%s" "$resp" | sed -n 's/.*\"result\":[[:space:]]*\([0-9]\{1,\}\).*/\1/p')
     if [ -n "$res" ]; then
       printf "%s,%s,ok,\n" "$f" "$res" >> "$OUT"
     else
@@ -61,7 +56,6 @@ if [ $? -eq 0 ]; then
   fi
 done
 echo "CSV written to $OUT"
-
 
 ```
 text
