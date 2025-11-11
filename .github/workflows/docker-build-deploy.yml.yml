@@ -5,14 +5,14 @@ on:
     branches:
       - main
     types:
-      - closed  # Trigger when pull request is closed
+      - closed
     paths:
-      - 'defender/**'  # Trigger only on changes in the defender directory
+      - 'defender/**'
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true  # Only run if PR was merged
+    if: github.event.pull_request.merged == true
 
     steps:
     - name: Checkout code
@@ -27,14 +27,19 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+    - name: Get current date
+      id: date
+      run: echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+
     - name: Build and push Docker image
       uses: docker/build-push-action@v6
       with:
-        context: ./defender  # Set context to defender directory
-        file: ./defender/Dockerfile  # Path to Dockerfile
+        context: ./defender
+        file: ./defender/Dockerfile
         push: true
         tags: |
           ${{ secrets.DOCKERHUB_USERNAME }}/malarena-defender:latest
           ${{ secrets.DOCKERHUB_USERNAME }}/malarena-defender:${{ github.sha }}
+          ${{ secrets.DOCKERHUB_USERNAME }}/malarena-defender:${{ env.DATE }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
