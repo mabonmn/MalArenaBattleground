@@ -260,36 +260,48 @@ def run_packing(input_dir, output_dir, packer_type="upx"):
         logger.error(f"Packing error: {e}")
         return False
 
+
 def run_signing(input_dir):
-    """Run signing step with the fixed signing script."""
+    """Run signing step with the mirror-based signing script."""
     logger = logging.getLogger(__name__)
     logger.info("=== SIGNING PHASE ===")
 
     try:
-        # Try the fixed signing script first, then fallback to original
-        signing_scripts = ["sign_script_fixed.py", "sign_script.py"]
-        script_path = None
+        # Create a dedicated output directory for signed files
+        signed_output_dir = Path(input_dir).parent / f"signed_{Path(input_dir).name}"
+        signed_output_dir.mkdir(parents=True, exist_ok=True)
 
-        for script in signing_scripts:
-            exists, path = verify_script_exists(script)
-            if exists:
-                script_path = path
-                logger.info(f"Using signing script: {script}")
-                break
-
-        if not script_path:
-            logger.warning("No signing script found - skipping signing")
+        # Try the signing script
+        exists, script_path = verify_script_exists("sign_script.py")
+        if not exists:
+            logger.warning("sign_script.py not found - skipping signing")
             return True
 
-        cmd = [sys.executable, script_path, str(input_dir), "--verbose"]
+        # Call the signing script with both input and output directories
+        cmd = [
+            sys.executable,
+            script_path,
+            str(input_dir),
+            str(signed_output_dir),
+            "--verbose"
+        ]
+
+        logger.info(f"Running signing script with: {input_dir} -> {signed_output_dir}")
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
 
         if result.returncode == 0:
-            logger.info("✓ Signing completed")
-        else:
-            logger.warning("Signing failed")
+            logger.info("✓ Signing completed successfully")
 
-        return True
+            # Copy signed files back to input_dir if successful
+            for file_path in signed_output_dir.glob("*"):
+                if file_path.is_file() and not file_path.name.endswith('.csv'):
+                    shutil.copy2(file_path, Path(input_dir) / file_path.name)
+                    logger.debug(f"Copied signed file back: {file_path.name}")
+
+            return True
+        else:
+            logger.warning(f"Signing failed: {result.stderr}")
+            return True
 
     except Exception as e:
         logger.error(f"Signing error: {e}")
