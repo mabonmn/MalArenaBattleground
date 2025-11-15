@@ -15,7 +15,7 @@ import sys
 import shutil
 
 # Configuration
-GEMINI_API_KEY = "AIzaSyCRtQYOIEedxIZ0g5sfnVayHKhCxJyaC8U"  # Replace with your Gemini API key
+GEMINI_API_KEY = "key-here"  # Replace with your Gemini API key
 MODEL = "gemini-2.0-flash"  # or "gemini-1.5-pro"
 MAX_ATTEMPTS = 5
 COMPILER = "gcc"
