@@ -93,6 +93,7 @@ All attacks are in `attacker/generated`.
 
 This content was generated with the help of AI models to demonstrate potential attack scenarios. Please use responsibly and ethically.
 Get you API key for Gooogle Gemini and modify `GEMINI_API_KEY = "key-here"` in the script.
+This has been only used on linux systems, so use mingw crosscompiler to build windows executables.
 Run the attack generation script:
 ```
 python <script_name>.py <ip_address (x.x.x.x)>

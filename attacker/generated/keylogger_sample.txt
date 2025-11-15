@@ -1,0 +1,366 @@
+
+======================================================================
+Timestamp: 2025-11-12 12:16:08
+Client IP: 10.246.239.43
+Path: /logs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Content-Type: text/plain
+Content-Length: 65
+======================================================================
+STARTUP: Keylogger initialized at http://10.246.239.43:25566/logs
+
+
+======================================================================
+Timestamp: 2025-11-12 12:16:08
+Client IP: 10.246.239.43
+Path: /logs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Content-Type: text/plain
+Content-Length: 56
+======================================================================
+2025-11-12 19:16:10.722 | WINDOWCHANGE | local_test (1)
+
+
+
+======================================================================
+Timestamp: 2025-11-13 00:01:29
+Client IP: 10.187.103.153
+Path: /logs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Content-Type: text/plain
+Content-Length: 66
+======================================================================
+STARTUP: Keylogger initialized at http://10.187.103.153:25566/logs
+
+
+======================================================================
+Timestamp: 2025-11-13 00:01:29
+Client IP: 10.187.103.153
+Path: /logs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Content-Type: text/plain
+Content-Length: 56
+======================================================================
+2025-11-13 00:01:27.089 | WINDOWCHANGE | local_test (2)
+
+
+
+======================================================================
+Timestamp: 2025-11-13 00:01:30
+Client IP: 10.187.103.153
+Path: /logs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Content-Type: text/plain
+Content-Length: 51
+======================================================================
+2025-11-13 00:01:28.448 | WINDOWCHANGE | Downloads
+
+
+
+======================================================================
+Timestamp: 2025-11-13 00:01:34
+Client IP: 10.187.103.153
+Path: /logs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Content-Type: text/plain
+Content-Length: 112
+======================================================================
+2025-11-13 00:01:32.040 | WINDOWCHANGE | My Drive - Google Drive and 5 more pages - Profile 1 - Microsoft? Edge
+
+
+
+======================================================================
+Timestamp: 2025-11-13 00:02:07
+Client IP: 10.187.103.153
+Path: /logs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Content-Type: text/plain
+Content-Length: 96
+======================================================================
+2025-11-13 00:02:04.280 | WINDOWCHANGE | New tab and 4 more pages - Profile 1 - Microsoft? Edge
+
+
+
+======================================================================
+Timestamp: 2025-11-13 00:02:08
+Client IP: 10.187.103.153
+Path: /logs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Content-Type: text/plain
+Content-Length: 138
+======================================================================
+2025-11-13 00:02:05.923 | WINDOWCHANGE | Chapel of St. Cornelius the Centurion - Wikipedia and 3 more pages - Profile 1 - Microsoft? Edge
+
+
+
+======================================================================
+Timestamp: 2025-11-13 00:02:14
+Client IP: 10.187.103.153
+Path: /logs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Content-Type: text/plain
+Content-Length: 121
+======================================================================
+2025-11-13 00:02:09.869 | WINDOWCHANGE | Wikipedia, the free encyclopedia and 3 more pages - Profile 1 - Microsoft? Edge
+
+
+
+======================================================================
+Timestamp: 2025-11-13 00:02:25
+Client IP: 10.187.103.153
+Path: /logs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Content-Type: text/plain
+Content-Length: 42
+======================================================================
+2025-11-13 00:02:23.065 | WINDOWCHANGE | 
+
+
+
+======================================================================
+Timestamp: 2025-11-13 00:02:26
+Client IP: 10.187.103.153
+Path: /logs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Content-Type: text/plain
+Content-Length: 54
+======================================================================
+2025-11-13 00:02:23.399 | WINDOWCHANGE | Task Manager
+
+
+
+======================================================================
+Timestamp: 2025-11-13 00:02:30
+Client IP: 10.187.103.153
+Path: /logs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Content-Type: text/plain
+Content-Length: 121
+======================================================================
+2025-11-13 00:02:27.384 | WINDOWCHANGE | Wikipedia, the free encyclopedia and 3 more pages - Profile 1 - Microsoft? Edge
+
+
+
+======================================================================
+Timestamp: 2025-11-13 00:02:30
+Client IP: 10.187.103.153
+Path: /logs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Content-Type: text/plain
+Content-Length: 121
+======================================================================
+2025-11-13 00:02:27.859 | WINDOWCHANGE | Wikipedia, the free encyclopedia and 2 more pages - Profile 1 - Microsoft? Edge
+
+
+
+======================================================================
+Timestamp: 2025-11-13 00:02:32
+Client IP: 10.187.103.153
+Path: /logs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Content-Type: text/plain
+Content-Length: 120
+======================================================================
+2025-11-13 00:02:29.573 | WINDOWCHANGE | Wikipedia, the free encyclopedia and 1 more page - Profile 1 - Microsoft? Edge
+
+
+
+======================================================================
+Timestamp: 2025-11-13 00:02:34
+Client IP: 10.187.103.153
+Path: /logs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Content-Type: text/plain
+Content-Length: 96
+======================================================================
+2025-11-13 00:02:31.455 | WINDOWCHANGE | New tab and 2 more pages - Profile 1 - Microsoft? Edge
+
+
+
+======================================================================
+Timestamp: 2025-11-13 00:02:36
+Client IP: 10.187.103.153
+Path: /logs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Content-Type: text/plain
+Content-Length: 95
+======================================================================
+2025-11-13 00:02:33.681 | WINDOWCHANGE | New tab and 1 more page - Profile 1 - Microsoft? Edge
+
+
+
+======================================================================
+Timestamp: 2025-11-13 00:02:39
+Client IP: 10.187.103.153
+Path: /logs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Content-Type: text/plain
+Content-Length: 79
+======================================================================
+2025-11-13 00:02:36.484 | WINDOWCHANGE | New tab - Profile 1 - Microsoft? Edge
+
+
+
+======================================================================
+Timestamp: 2025-11-13 00:03:28
+Client IP: 10.187.103.153
+Path: /logs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Content-Type: text/plain
+Content-Length: 42
+======================================================================
+2025-11-13 00:03:25.449 | WINDOWCHANGE | 
+
+
+
+======================================================================
+Timestamp: 2025-11-13 00:03:28
+Client IP: 10.187.103.153
+Path: /logs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Content-Type: text/plain
+Content-Length: 54
+======================================================================
+2025-11-13 00:03:25.771 | WINDOWCHANGE | Task Manager
+
+
+
+======================================================================
+Timestamp: 2025-11-13 00:03:41
+Client IP: 10.187.103.153
+Path: /logs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Content-Type: text/plain
+Content-Length: 79
+======================================================================
+2025-11-13 00:03:39.180 | WINDOWCHANGE | New tab - Profile 1 - Microsoft? Edge
+
+
+
+======================================================================
+Timestamp: 2025-11-13 00:03:44
+Client IP: 10.187.103.153
+Path: /logs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Content-Type: text/plain
+Content-Length: 272
+======================================================================
+2025-11-13 00:03:40.622 | New tab - Profile 1 - Microsoft? Edge | w
+2025-11-13 00:03:40.827 | New tab - Profile 1 - Microsoft? Edge | i
+2025-11-13 00:03:41.032 | New tab - Profile 1 - Microsoft? Edge | k
+2025-11-13 00:03:41.206 | New tab - Profile 1 - Microsoft? Edge | i
+
+
+
+======================================================================
+Timestamp: 2025-11-13 00:03:48
+Client IP: 10.187.103.153
+Path: /logs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Content-Type: text/plain
+Content-Length: 90
+======================================================================
+2025-11-13 00:03:45.570 | WINDOWCHANGE | wikipedia - Search - Profile 1 - Microsoft? Edge
+
+
+
+======================================================================
+Timestamp: 2025-11-13 00:03:50
+Client IP: 10.187.103.153
+Path: /logs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Content-Type: text/plain
+Content-Length: 96
+======================================================================
+2025-11-13 00:03:47.733 | WINDOWCHANGE | Untitled and 1 more page - Profile 1 - Microsoft? Edge
+
+
+
+======================================================================
+Timestamp: 2025-11-13 00:03:51
+Client IP: 10.187.103.153
+Path: /logs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Content-Type: text/plain
+Content-Length: 314
+======================================================================
+2025-11-13 00:03:48.593 | WINDOWCHANGE | bing.com/ck/a?!&&p=af06b9adc2af74753c1ef35451f7791dfb00b96456968c1efe8539458b077f34JmltdHM9MTc2MjkwNTYwMA&ptn=3&ver=2&hsh=4&fclid=3930b140-7ebc-6488-2462-a2817f7c650d&psq=wikipedia&u=a1aHR0cHM6Ly93d3cud2lraXBlZGlhLm9yZy8&ntb=1 and 1 more page - Profile 1 - Microsoft? Edge
+
+
+
+======================================================================
+Timestamp: 2025-11-13 00:03:52
+Client IP: 10.187.103.153
+Path: /logs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Content-Type: text/plain
+Content-Length: 97
+======================================================================
+2025-11-13 00:03:49.408 | WINDOWCHANGE | Wikipedia and 1 more page - Profile 1 - Microsoft? Edge
+
+
+
+======================================================================
+Timestamp: 2025-11-13 00:03:59
+Client IP: 10.187.103.153
+Path: /logs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Content-Type: text/plain
+Content-Length: 120
+======================================================================
+2025-11-13 00:03:56.642 | WINDOWCHANGE | Wikipedia, the free encyclopedia and 1 more page - Profile 1 - Microsoft? Edge
+
+
+
+======================================================================
+Timestamp: 2025-11-13 00:04:24
+Client IP: 10.187.103.153
+Path: /logs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Content-Type: text/plain
+Content-Length: 112
+======================================================================
+2025-11-13 00:04:21.175 | WINDOWCHANGE | Hideo Kojima - Wikipedia and 1 more page - Profile 1 - Microsoft? Edge
+
+
+
+======================================================================
+Timestamp: 2025-11-13 00:04:32
+Client IP: 10.187.103.153
+Path: /logs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Content-Type: text/plain
+Content-Length: 545
+======================================================================
+2025-11-13 00:03:40.622 | New tab - Profile 1 - Microsoft? Edge | w
+2025-11-13 00:03:40.827 | New tab - Profile 1 - Microsoft? Edge | i
+2025-11-13 00:03:41.032 | New tab - Profile 1 - Microsoft? Edge | k
+2025-11-13 00:03:41.206 | New tab - Profile 1 - Microsoft? Edge | i
+2025-11-13 00:04:17.054 | Wikipedia, the free encyclopedia and 1 more page - Profile 1 - Microsoft? Edge | h
+2025-11-13 00:04:17.278 | Wikipedia, the free encyclopedia and 1 more page - Profile 1 - Microsoft? Edge | i
+2025-11-13 00:04:17.487 | Wikipedia, the free encyclope
+
+
+======================================================================
+Timestamp: 2025-11-13 00:04:46
+Client IP: 10.187.103.153
+Path: /logs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Content-Type: text/plain
+Content-Length: 115
+======================================================================
+2025-11-13 00:04:43.119 | WINDOWCHANGE | Death Stranding - Wikipedia and 1 more page - Profile 1 - Microsoft? Edge
+
+
+
+======================================================================
+Timestamp: 2025-11-13 00:05:01
+Client IP: 10.187.103.153
+Path: /logs
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Content-Type: text/plain
+Content-Length: 110
+======================================================================
+2025-11-13 00:04:58.598 | WINDOWCHANGE | Open world - Wikipedia and 1 more page - Profile 1 - Microsoft? Edge
+
+

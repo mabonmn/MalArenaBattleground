@@ -1,0 +1,202 @@
+
+======================================================================
+Timestamp: 2025-11-13 01:58:45
+Client IP: 10.187.103.153
+Path: /recon
+User-Agent: Mozilla/5.0
+Content-Type: text/plain
+Content-Length: 7426
+======================================================================
+Windows 8 (Version 6.2, Build 9200)CPU Architecture: x64 (AMD64), Number of Cores: 2, Processor Type: 8664, Page Size: 4096OS Version: 6.2.9200 (Build 2)
+CPU: 64-bit, Processor Type: 8664
+Adapter Name: {2A3E6A46-29D5-4791-A79B-1340A338D51B}
+  Description: Intel(R) PRO/1000 MT Desktop Adapter
+  MAC Address: 08-00-27-C5-91-23
+  IP Address: 10.0.2.15
+  Subnet Mask: 255.255.255.0
+  Gateway: 10.0.2.2
+  DHCP Server: 10.0.2.2
+  Adapter Type: 6
+
+Error getting hostname.
+Process ID: 0, Name: [System Process]
+Process ID: 4, Name: System
+Process ID: 92, Name: Registry
+Process ID: 340, Name: smss.exe
+Process ID: 432, Name: csrss.exe
+Process ID: 508, Name: wininit.exe
+Process ID: 520, Name: csrss.exe
+Process ID: 600, Name: winlogon.exe
+Process ID: 640, Name: services.exe
+Process ID: 652, Name: lsass.exe
+Process ID: 756, Name: svchost.exe
+Process ID: 764, Name: fontdrvhost.exe
+Process ID: 772, Name: fontdrvhost.exe
+Process ID: 876, Name: svchost.exe
+Process ID: 920, Name: svchost.exe
+Process ID: 1000, Name: svchost.exe
+Process ID: 300, Name: dwm.exe
+Process ID: 388, Name: svchost.exe
+Process ID: 892, Name: svchost.exe
+Process ID: 416, Name: svchost.exe
+Process ID: 1128, Name: svchost.exe
+Process ID: 1180, Name: svchost.exe
+Process ID: 1228, Name: svchost.exe
+Process ID: 1380, Name: svchost.exe
+Process ID: 1396, Name: svchost.exe
+Process ID: 1412, Name: svchost.exe
+Process ID: 1428, Name: svchost.exe
+Process ID: 1460, Name: svchost.exe
+Process ID: 1488, Name: svchost.exe
+Process ID: 1608, Name: Memory Compression
+Process ID: 1640, Name: svchost.exe
+Process ID: 1664, Name: svchost.exe
+Process ID: 1720, Name: svchost.exe
+Process ID: 1732, Name: svchost.exe
+Process ID: 1780, Name: svchost.exe
+Process ID: 1972, Name: svchost.exe
+Process ID: 2024, Name: svchost.exe
+Process ID: 2036, Name: svchost.exe
+Process ID: 1408, Name: svchost.exe
+Process ID: 2148, Name: svchost.exe
+Process ID: 2156, Name: svchost.exe
+Process ID: 2164, Name: svchost.exe
+Process ID: 2220, Name: svchost.exe
+Process ID: 2368, Name: spoolsv.exe
+Process ID: 2408, Name: svchost.exe
+Process ID: 2468, Name: svchost.exe
+Process ID: 2672, Name: svchost.exe
+Process ID: 2684, Name: svchost.exe
+Process ID: 2692, Name: svchost.exe
+Process ID: 2700, Name: svchost.exe
+Process ID: 2712, Name: svchost.exe
+Process ID: 2776, Name: svchost.exe
+Process ID: 2792, Name: svchost.exe
+Process ID: 2828, Name: svchost.exe
+Process ID: 2856, Name: svchost.exe
+Process ID: 2904, Name: svchost.exe
+Process ID: 2984, Name: svchost.exe
+Process ID: 3076, Name: svchost.exe
+Process ID: 3760, Name: SearchIndexer.exe
+Process ID: 3572, Name: AggregatorHost.exe
+Process ID: 3300, Name: svchost.exe
+Process ID: 3264, Name: svchost.exe
+Process ID: 1308, Name: svchost.exe
+Process ID: 2976, Name: svchost.exe
+Process ID: 1152, Name: svchost.exe
+Process ID: 3924, Name: svchost.exe
+Process ID: 1136, Name: svchost.exe
+Process ID: 2916, Name: svchost.exe
+Process ID: 1652, Name: svchost.exe
+Process ID: 2240, Name: SecurityHealthService.exe
+Process ID: 3756, Name: MsMpEng.exe
+Process ID: 2488, Name: MpDefenderCoreService.exe
+Process ID: 1848, Name: NisSrv.exe
+Process ID: 4052, Name: dllhost.exe
+Process ID: 1196, Name: svchost.exe
+Process ID: 2848, Name: sihost.exe
+Process ID: 3940, Name: svchost.exe
+Process ID: 3992, Name: svchost.exe
+Process ID: 4032, Name: taskhostw.exe
+Process ID: 1568, Name: svchost.exe
+Process ID: 2016, Name: ctfmon.exe
+Process ID: 3916, Name: explorer.exe
+Process ID: 2384, Name: svchost.exe
+Process ID: 4924, Name: svchost.exe
+Process ID: 4964, Name: svchost.exe
+Process ID: 4592, Name: svchost.exe
+Process ID: 368, Name: StartMenuExperienceHost.exe
+Process ID: 2504, Name: TextInputHost.exe
+Process ID: 5156, Name: svchost.exe
+Process ID: 5292, Name: RuntimeBroker.exe
+Process ID: 5536, Name: SearchApp.exe
+Process ID: 5596, Name: RuntimeBroker.exe
+Process ID: 5816, Name: ShellExperienceHost.exe
+Process ID: 5920, Name: RuntimeBroker.exe
+Process ID: 4016, Name: msedge.exe
+Process ID: 6160, Name: msedge.exe
+Process ID: 6452, Name: msedge.exe
+Process ID: 6464, Name: msedge.exe
+Process ID: 6504, Name: msedge.exe
+Process ID: 6868, Name: SecurityHealthSystray.exe
+Process ID: 7244, Name: OneDrive.exe
+Process ID: 7996, Name: keylogger_http_10_246_239_43.exe
+Process ID: 6708, Name: RuntimeBroker.exe
+Process ID: 4436, Name: msedge.exe
+Process ID: 7460, Name: svchost.exe
+Process ID: 1528, Name: msedge.exe
+Process ID: 3512, Name: FileCoAuth.exe
+Process ID: 6696, Name: Taskmgr.exe
+Process ID: 2936, Name: 5.exe
+Process ID: 6476, Name: SearchApp.exe
+Process ID: 5400, Name: msedgewebview2.exe
+Process ID: 7136, Name: msedgewebview2.exe
+Process ID: 8132, Name: msedgewebview2.exe
+Process ID: 4184, Name: msedgewebview2.exe
+Process ID: 6788, Name: msedgewebview2.exe
+Process ID: 4116, Name: msedgewebview2.exe
+Process ID: 3016, Name: msedge.exe
+Process ID: 1424, Name: msedge.exe
+Process ID: 3628, Name: UserOOBEBroker.exe
+Process ID: 5604, Name: svchost.exe
+Process ID: 680, Name: svchost.exe
+Process ID: 8080, Name: MoUsoCoreWorker.exe
+Process ID: 3380, Name: TrustedInstaller.exe
+Process ID: 7360, Name: wuauclt.exe
+Process ID: 5388, Name: TiWorker.exe
+Process ID: 7364, Name: svchost.exe
+Process ID: 9540, Name: svchost.exe
+Process ID: 10548, Name: svchost.exe
+Process ID: 10728, Name: RuntimeBroker.exe
+Process ID: 8436, Name: taskhostw.exe
+Process ID: 9096, Name: msedge.exe
+Process ID: 8632, Name: svchost.exe
+Process ID: 9396, Name: smartscreen.exe
+Process ID: 4944, Name: CHXSmartScreen.exe
+Process ID: 6492, Name: 1.exe
+Process ID: 8944, Name: conhost.exe
+OS Version: 6.2 (Build 9200)
+Processor Architecture: 9, Number of processors: 2
+Network Adapters:
+  Adapter Name: {2A3E6A46-29D5-4791-A79B-1340A338D51B}, Description: Intel(R) PRO/1000 MT Desktop Adapter, MAC Address: 
+  Microsoft Update Health Tools
+  Python 3.11.6 Standard Library (64-bit)
+  Python 3.11.6 Executables (64-bit)
+  Python 3.11.6 Add to Path (64-bit)
+  Microsoft Visual C++ 2022 X64 Minimum Runtime - 14.40.33816
+  Microsoft Visual C++ 2022 X64 Additional Runtime - 14.40.33816
+  Python 3.11.6 Tcl/Tk Support (64-bit)
+  Python 3.11.6 Core Interpreter (64-bit)
+  Python 3.11.6 Test Suite (64-bit)
+  Python 3.11.6 pip Bootstrap (64-bit)
+  Python 3.11.6 Documentation (64-bit)
+  Update for x64-based Windows Systems (KB5001716)
+  Python 3.11.6 Development Libraries (64-bit)
+  Python 3.11.6 Utility Scripts (64-bit)
+OS Version: 6.2, Build: 9200
+Processor Architecture: 9
+Network Adapters Found.
+No Antivirus Processes Detected (based on process name).
+OS Version: Windows 6.2.9200, NT Processor: 2, Drives: ACD
+Adapter: {2A3E6A46-29D5-4791-A79B-1340A338D51B}, IP Address: 10.0.2.15, Gateway: 10.0.2.2
+Shares:
+
+
+-------------------------------------------------------------------------------
+C$           C:\                             Default share                     
+IPC$                                         Remote IPC                        
+ADMIN$       C:\WINDOWS                      Remote Admin                      
+The command completed successfully.
+
+
+Network Adapters:
+  Adapter Name: {2A3E6A46-29D5-4791-A79B-1340A338D51B}
+  Adapter Description: Intel(R) PRO/1000 MT Desktop Adapter
+  IP Address: 10.0.2.15
+OS Version: 6.2.9200 (Build 9200)
+Processor Architecture: 9
+Adapter Name: {2A3E6A46-29D5-4791-A79B-1340A338D51B}
+Adapter Description: Intel(R) PRO/1000 MT Desktop Adapter
+Adapter IP Address: 10.0.2.15
+Firewall Status: Enabled0 days, 02:46:30
+
