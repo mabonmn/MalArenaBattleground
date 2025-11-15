@@ -41,9 +41,9 @@ def run_astral_pe_mutation(input_dir, output_dir, phase_name="MUTATION"):
 
     try:
         # Use the minimal mutation script
-        exists, script_path = verify_script_exists("mutate_script_minimal.py")
+        exists, script_path = verify_script_exists("mutate_script.py")
         if not exists:
-            logger.error("mutate_script_minimal.py not found")
+            logger.error("mutate_script.py not found")
             # Fallback: copy files
             Path(output_dir).mkdir(parents=True, exist_ok=True)
             for file_path in Path(input_dir).glob("*"):
@@ -260,7 +260,7 @@ def run_packing(input_dir, output_dir, packer_type="upx"):
         logger.error(f"Packing error: {e}")
         return False
 
-def run_signing(input_dir):
+def run_signing(input_dir,output_dir):
     """Run signing step."""
     logger = logging.getLogger(__name__)
     logger.info("=== SIGNING PHASE ===")
@@ -271,7 +271,7 @@ def run_signing(input_dir):
             logger.warning("sign_script.py not found - skipping signing")
             return True
 
-        cmd = [sys.executable, script_path, str(input_dir), "--verbose"]
+        cmd = [sys.executable, script_path, str(input_dir),str(output_dir), "--verbose"]
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
 
         if result.returncode == 0:
@@ -293,7 +293,7 @@ def main():
 
     # Simple argument parsing
     args = sys.argv[1:]
-    if len(args) < 2:
+    if len(args) < 1:
         print("Usage: python orchestrator_linux.py target_dir source_dir [options]")
         print("Options:")
         print("  --output-dir DIR     Output directory (default: output_linux)")
@@ -308,7 +308,6 @@ def main():
         return 1
 
     target_dir = args[0]
-    source_dir = args[1]
 
     # Parse options
     output_base = "output_linux"
@@ -422,14 +421,15 @@ def main():
                     shutil.copy2(file_path, after_post_mutation_dir / file_path.name)
             current_dir = after_post_mutation_dir
 
-        # Phase 7: Copy to final directory
-        for file_path in current_dir.glob("*"):
-            if file_path.is_file():
-                shutil.copy2(file_path, final_dir / file_path.name)
+
 
         # Phase 8: Signing
         if not skip_signing:
-            run_signing(final_dir)
+            run_signing(current_dir,final_dir)
+        else:
+            for file_path in current_dir.glob("*"):
+                if file_path.is_file():
+                    shutil.copy2(file_path, final_dir / file_path.name)
 
         # Summary
         final_files = list(final_dir.glob("*"))

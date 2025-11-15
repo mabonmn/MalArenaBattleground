@@ -351,7 +351,7 @@ def main():
     )
     parser.add_argument("input_dir", help="Directory containing PE files to sign")
     parser.add_argument("output_dir", help="Directory to write signed PE files into")
-    parser.add_argument("--cert", default="mycert.pem", help="Certificate file path")
+    parser.add_argument("--cert", default="codesign.crt", help="Certificate file path")
     parser.add_argument("--key", default="mykey.pem", help="Private key file path")
     parser.add_argument(
         "--subject", default="Test Code Signing Certificate", help="Certificate subject"
