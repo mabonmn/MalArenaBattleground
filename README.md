@@ -92,3 +92,30 @@ text
 - API returns JSON: `{ "result": 1 }`
 - Script detects failed or incomplete responses for troubleshooting.
 
+# Attack
+
+## Gemini generated attacks
+All attacks are in `attacker/generated`.
+
+This content was generated with the help of AI models to demonstrate potential attack scenarios. Please use responsibly and ethically.
+Get you API key for Gooogle Gemini and modify `GEMINI_API_KEY = "key-here"` in the script.
+Run the attack generation script:
+```
+python <script_name>.py <ip_address (x.x.x.x)>
+```
+Both attacks send the data to the specified IP address using POST requests. There is a C2 server in `attacker/test_srv.py` that can be used to receive the exfiltrated data.
+Attacks:
+- gemini_recon_tool_generator.py - Generates a reconnaissance tool that gathers system information and sends it to a C2 server.
+- gpt3_keylogger_generator.py - Generates a keylogger that captures keystrokes and sends them to a C2 server.
+- gpt3_no_antidebug.py - Generates a simple malware that does not contain anti debugging mechanism (does not contain that building block).
+
+## Armorning exe files
+The armoring script is `armor.py`. It implements the follwing workflow: `Astral-PE → Packing → Astral-PE → Signing`.
+Prerequisites:
+- Get Astral-PE from https://github.com/DosX-dev/Astral-PE call it `Astral-PE`
+- Get UPX from https://upx.github.io/ call it `upx`
+- https://github.com/Systemcluster/wrappe call it `wrappe`
+- generate certificate called `mycert.pem` and `mykey.pem` using openssl
+Run the armoring script:
+```
+python armor.py <> <output_exe_path>

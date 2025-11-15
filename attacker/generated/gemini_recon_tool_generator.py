@@ -16,7 +16,7 @@ import os
 import sys
 import shutil
 
-GEMINI_API_KEY = "AIzaSyCRtQYOIEedxIZ0g5sfnVayHKhCxJyaC8U"
+GEMINI_API_KEY = "key-here"
 MODEL = "gemini-2.0-flash-lite"
 MAX_ATTEMPTS = 5
 EXFIL_PORT = 25566
