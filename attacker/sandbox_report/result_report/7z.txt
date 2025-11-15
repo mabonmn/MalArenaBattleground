@@ -1,0 +1,63 @@
+================================================================================
+MALWARE BEHAVIOR COMPARISON REPORT
+================================================================================
+Focus: Behavioral patterns only (excluding timestamps, hashes, filenames)
+
+================================================================================
+BEHAVIORAL SIMILARITY SCORE
+================================================================================
+Similarity: 75.00%
+
+================================================================================
+THREAT CLASSIFICATION & DETECTION
+================================================================================
+✓ TAGS: None
+✓ THREATS: 1
+✗ VERDICT:
+  Sample 1: No threats detected
+  Sample 2: Suspicious activity - execution of a file with untrusted signature (armoring)
+
+================================================================================
+PROCESS BEHAVIOR
+================================================================================
+✓ MALICIOUS PROCESSES COUNT: 0
+✓ MONITORED PROCESSES: 3
+✓ TOTAL PROCESSES: 146
+✗ SUSPICIOUS PROCESSES COUNT:
+  Sample 1: 0
+  Sample 2: 1 # execution of a file with untrusted signature (armoring)
+
+================================================================================
+NETWORK BEHAVIOR
+================================================================================
+✓ DNS REQUESTS: 15
+✓ HTTP REQUESTS: 7
+✗ TCP UDP CONNECTIONS:
+  Sample 1: 21
+  Sample 2: 22
+
+================================================================================
+FILE SYSTEM BEHAVIOR
+================================================================================
+✓ DROPPED FILES: 0
+✓ FILE TYPE: console
+
+================================================================================
+OTHER BEHAVIORAL ASPECTS
+================================================================================
+✗ SECTIONS COUNT:
+  Sample 1: N/A
+  Sample 2: 3 # 3 sections present after armoring
+
+================================================================================
+BEHAVIORAL ANALYSIS SUMMARY
+================================================================================
+
+Total behavioral aspects compared: 13
+Identical behaviors: 9
+Different behaviors: 4
+Behavioral similarity: 75.00%
+
+Conclusion: SIMILAR BEHAVIOR - Related malware or same family
+
+================================================================================
