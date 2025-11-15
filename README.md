@@ -115,7 +115,46 @@ Prerequisites:
 - Get Astral-PE from https://github.com/DosX-dev/Astral-PE call it `Astral-PE`
 - Get UPX from https://upx.github.io/ call it `upx`
 - https://github.com/Systemcluster/wrappe call it `wrappe`
-- generate certificate called `mycert.pem` and `mykey.pem` using openssl
+- generate certificate called `codesign.crt` and `mykey.pem` using openssl
 Run the armoring script:
 ```
-python armor.py <> <output_exe_path>
+python armor.py  <exe_directory>
+```
+For aditional options run:
+```
+python armor.py -h
+```
+Default output is `output_linux/final_<timestamp>/`
+
+## Goodware samples
+Goodware samples are in `goodware/` directory. There is 50 samples this is just for testing purposes, they are armored and submitted in the zip file.
+
+## Colorful malware
+Malware samples are encoded to bmp imase using orchestrator_bmp_only.py script. The script uses steganography to hide the malware binary in green and blue channels. Additionally it adds goodware bytes to red channel.
+To run the script:
+```
+python orchestrator_bmp_only.py <malware_directory> <goodware_directory>
+```
+Outputs are bmp images in the output_v3/ directory.
+
+## Dropper
+The ropper is in Dropper/ directory. It loads the bmp image, extracts the malware binary and executes it in new process.
+In order to build the dropper exe copy one of the bmp images to Dropper/ directory as mw.bmp and compile using Visual Studio.
+
+## Misc scripts
+There are aditional unused scripts:
+- code_cave_inserter.py
+- pe_string_injector.py
+- bmp_compress.py & decompmpress(.cpp/.exe)
+
+These scripts were used during the development but are not part of the main workflow. Maily because Images are too large as they are. They are morstly functional but not fully tested.
+
+
+## Reports
+Reports related to the project are in the `sandbox_report/` directory. These are AnyRun sandbox outputs. `sandbox_report/mw_reports/original` conains full reports for original unmodified samples (2 amlware, and 7zip installer). `sandbox_report/mw_reports/my_imp`.
+compare_malware_reports.py is very primitive tool to compare two reports and extract some basic information, and compute similarity score.
+`result_report/` contains txt files maually anotated to show which differences originate from armor and which from dropper.
+`sample_1_vt/` conatins capabilities report for the sample 1 from VirtusTotal to show that all of the capabilities are still there.
+
+## Disclaimer
+This repository is intended for educational and research purposes only. The author is not responsible for any misuse or damage caused by the materials provided herein. Always ensure you have proper authorization before conducting any security testing or analysis on systems and software.

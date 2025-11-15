@@ -294,7 +294,7 @@ def main():
     # Simple argument parsing
     args = sys.argv[1:]
     if len(args) < 1:
-        print("Usage: python orchestrator_linux.py target_dir source_dir [options]")
+        print("Usage: python orchestrator_linux.py source_dir [options]")
         print("Options:")
         print("  --output-dir DIR     Output directory (default: output_linux)")
         print("  --skip-strings       Skip string injection")
