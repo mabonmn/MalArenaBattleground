@@ -1,0 +1,71 @@
+================================================================================
+MALWARE BEHAVIOR COMPARISON REPORT
+================================================================================
+Focus: Behavioral patterns only (excluding timestamps, hashes, filenames)
+
+================================================================================
+BEHAVIORAL SIMILARITY SCORE
+================================================================================
+Similarity: 38.46%
+
+================================================================================
+THREAT CLASSIFICATION & DETECTION
+================================================================================
+✓ TAGS: zeroaccess geo
+✓ THREATS: 17
+✓ VERDICT: Malicious activity
+
+================================================================================
+PROCESS BEHAVIOR
+================================================================================
+✓ SUSPICIOUS PROCESSES COUNT: 0
+✗ MALICIOUS PROCESSES COUNT:
+  Sample 1: 2
+  Sample 2: 3  # Dropper injects additional malicious process
+✗ MONITORED PROCESSES:
+  Sample 1: 5
+  Sample 2: 7
+✗ TOTAL PROCESSES:
+  Sample 1: 150
+  Sample 2: 153
+
+================================================================================
+NETWORK BEHAVIOR
+================================================================================
+✓ HTTP REQUESTS: 8
+✗ DNS REQUESTS:
+  Sample 1: 15
+  Sample 2: 17
+✗ TCP UDP CONNECTIONS:
+  Sample 1: 43
+  Sample 2: 38
+
+================================================================================
+FILE SYSTEM BEHAVIOR
+================================================================================
+✗ DROPPED FILES:
+  Sample 1: 3
+  Sample 2: 4 # aditional dropped file by dropper
+✗ FILE TYPE:
+  Sample 1: GUI
+  Sample 2: console # dropper is a console app
+
+================================================================================
+OTHER BEHAVIORAL ASPECTS
+================================================================================
+✗ SECTIONS COUNT:
+  Sample 1: 4
+  Sample 2: 3 # removed uneccesarry sections
+
+================================================================================
+BEHAVIORAL ANALYSIS SUMMARY
+================================================================================
+
+Total behavioral aspects compared: 13
+Identical behaviors: 5
+Different behaviors: 8
+Behavioral similarity: 38.46%
+
+Conclusion: DIFFERENT BEHAVIOR - Distinct malware samples
+
+================================================================================

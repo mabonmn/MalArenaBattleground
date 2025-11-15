@@ -1,0 +1,71 @@
+================================================================================
+MALWARE BEHAVIOR COMPARISON REPORT
+================================================================================
+Focus: Behavioral patterns only (excluding timestamps, hashes, filenames)
+
+================================================================================
+BEHAVIORAL SIMILARITY SCORE
+================================================================================
+Similarity: 38.46%
+
+================================================================================
+THREAT CLASSIFICATION & DETECTION
+================================================================================
+✓ THREATS: 3
+✗ TAGS:
+  Sample 1: delphi upx # same tags different order
+  Sample 2: upx delphi
+✗ VERDICT:
+  Sample 1: No threats detected
+  Sample 2: Malicious activity # malware sample broken, my dropper injection is flagged
+
+================================================================================
+PROCESS BEHAVIOR
+================================================================================
+✓ SUSPICIOUS PROCESSES COUNT: 0
+✗ MALICIOUS PROCESSES COUNT:
+  Sample 1: 0
+  Sample 2: 1 # dropper injects additional malicious process
+✗ MONITORED PROCESSES:
+  Sample 1: 4
+  Sample 2: 10
+✗ TOTAL PROCESSES:
+  Sample 1: 153
+  Sample 2: 156
+
+================================================================================
+NETWORK BEHAVIOR
+================================================================================
+✓ HTTP REQUESTS: 16
+✓ TCP UDP CONNECTIONS: 31
+✗ DNS REQUESTS:
+  Sample 1: 17
+  Sample 2: 18
+
+================================================================================
+FILE SYSTEM BEHAVIOR
+================================================================================
+✗ DROPPED FILES:
+  Sample 1: 0
+  Sample 2: 1 # dropper drops additional file
+✗ FILE TYPE:
+  Sample 1: GUI
+  Sample 2: console # dropper is a console app
+
+================================================================================
+OTHER BEHAVIORAL ASPECTS
+================================================================================
+✓ SECTIONS COUNT: 3
+
+================================================================================
+BEHAVIORAL ANALYSIS SUMMARY
+================================================================================
+
+Total behavioral aspects compared: 13
+Identical behaviors: 5
+Different behaviors: 8
+Behavioral similarity: 38.46%
+
+Conclusion: DIFFERENT BEHAVIOR - Distinct malware samples
+
+================================================================================
