@@ -67,7 +67,7 @@ text
 ---
 
 ## Pull Alternate Docker Image
-This is another Docker image that uses a weighted tournament script to have a LightGBM model in tandem with the MalConv Model to improve Accuracy. While it led to improvements in accuracy, going from 89.9% to 92.4%, the later refined MalConv had similar scores with much better performance, leading to this being made an alternate solution instead of our main entry.
+This is another Docker image that uses a weighted-tournament script to run a LightGBM model alongside the MalConv Model to improve Accuracy. While it led to improvements in accuracy, going from 89.9% to 92.4%, the later refined MalConv had similar scores with much better performance, leading to this being made an alternate solution instead of our main entry.
 
 ```
 docker pull mabonmn/malarena-defender:tournament
