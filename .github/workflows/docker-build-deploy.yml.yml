@@ -1,18 +1,15 @@
-name: Build and Deploy Defender Docker Image
+name: Build and Deploy Tournament Defender Docker Image
 
 on:
-  pull_request:
+  push:
     branches:
-      - main
-    types:
-      - closed  # Trigger when pull request is closed
+      - DetectionJess  # Change this to your tournament branch name
     paths:
-      - 'defender/**'  # Trigger only on changes in the defender directory
+      - 'defender/**'
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true  # Only run if PR was merged
 
     steps:
     - name: Checkout code
@@ -27,14 +24,26 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+    - name: Extract branch name
+      shell: bash
+      run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+      id: extract_branch
+
     - name: Build and push Docker image
       uses: docker/build-push-action@v6
       with:
-        context: ./defender  # Set context to defender directory
-        file: ./defender/Dockerfile  # Path to Dockerfile
+        context: ./defender
+        file: ./defender/Dockerfile
         push: true
         tags: |
-          ${{ secrets.DOCKERHUB_USERNAME }}/malarena-defender:latest
-          ${{ secrets.DOCKERHUB_USERNAME }}/malarena-defender:${{ github.sha }}
+          ${{ secrets.DOCKERHUB_USERNAME }}/malarena-defender:tournament
+          ${{ secrets.DOCKERHUB_USERNAME }}/malarena-defender:tournament-${{ github.sha }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
+
+    - name: Summary
+      run: |
+        echo "✅ Tournament image pushed to Docker Hub"
+        echo "📦 Image tags:"
+        echo "  - ${{ secrets.DOCKERHUB_USERNAME }}/malarena-defender:tournament"
+        echo "  - ${{ secrets.DOCKERHUB_USERNAME }}/malarena-defender:tournament-${{ github.sha }}"
