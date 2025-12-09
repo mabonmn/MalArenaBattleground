@@ -18,9 +18,15 @@ RUN pip install --upgrade pip setuptools wheel
 COPY docker-requirements.txt .
 RUN pip install --no-cache-dir -r docker-requirements.txt
 
-# ↓↓↓ THIS IS THE ONLY THING YOU NEED ↓↓↓
-# Force-install the last working signify version (0.7.0) — thrember 0.1.0 is perfectly happy with it
+# Pin signify 0.7.0 (keeps it stable)
 RUN pip install --no-cache-dir --force-reinstall "signify==0.7.0"
+
+# ↓↓↓ PATCH THREMBER'S BROKEN IMPORT ↓↓↓
+# Install sed for editing (slim doesn't have it)
+RUN apt-get update && apt-get install -y --no-install-recommends sed \
+    && apt-get clean && rm -rf /var/lib/apt/lists/* \
+    && sed -i 's/from signify.authenticode import SignedPEFile/from signify.authenticode.signed_pe import SignedPEFile/' /opt/venv/lib/python3.11/site-packages/thrember/features.py \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install EMBER2024
 RUN git clone https://github.com/FutureComputing4AI/EMBER2024.git /tmp/EMBER2024 \
