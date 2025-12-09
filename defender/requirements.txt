@@ -1,4 +1,3 @@
-# pip install git+https://github.com/endgameinc/ember.git
 flask>=1.1.2
 gevent>=1.4.0
 envparse
@@ -6,7 +5,5 @@ annoy
 numpy
 tqdm
 pefile
-
-# LightGBM and EMBER2024 for malware detection
 lightgbm>=3.3.0
 git+https://github.com/FutureComputing4AI/EMBER2024.git
