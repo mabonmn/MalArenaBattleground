@@ -4,24 +4,31 @@
 
 FROM python:3.11-slim AS builder
 
-# Install dependencies required to build EMBER2024 (thrember)
+# Install build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
         build-essential \
         git \
         python3-dev \
         libomp-dev \
+        cmake \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Create Python virtual env
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Copy requirements
+# Copy general Python dependencies
 COPY docker-requirements.txt .
 
-# Install python packages (including EMBER2024 from GitHub)
+# Upgrade pip and install requirements
+RUN pip install --upgrade pip setuptools wheel
 RUN pip install --no-cache-dir -r docker-requirements.txt
 
+# Install EMBER2024 from source automatically
+RUN git clone https://github.com/FutureComputing4AI/EMBER2024.git /tmp/EMBER2024 \
+    && cd /tmp/EMBER2024 \
+    && pip install . \
+    && rm -rf /tmp/EMBER2024
 
 ##########################################
 # STAGE 2 — SMALL RUNTIME IMAGE
@@ -34,7 +41,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libgomp1 \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Copy the prebuilt venv from stage 1
+# Copy Python virtual environment from builder
 COPY --from=builder /opt/venv /opt/venv
 
 # Copy defender code
@@ -44,7 +51,7 @@ COPY defender /opt/defender/defender
 # SETUP ENVIRONMENT
 ##########################################
 
-# Fix Matplotlib (no home for defender user)
+# Fix Matplotlib cache issue (no writable home for 'defender' user yet)
 RUN mkdir -p /opt/mplconfig && chmod -R 777 /opt/mplconfig
 ENV MPLCONFIGDIR=/opt/mplconfig
 
@@ -59,29 +66,30 @@ WORKDIR /opt/defender/
 ENV PATH="/opt/venv/bin:$PATH"
 ENV PYTHONPATH="/opt/defender"
 
-# Model configuration
+# Ensemble configuration
 ENV DF_ENSEMBLE_THRESHOLD=.65
 ENV DF_ENSEMBLE_REQUIRE_2OF3=false
 
+# MalConv model configuration
 ENV DF_MALCONV_WEIGHTS=models/malconv_model.pt
 ENV DF_MALCONV_THRESH=0.85
 ENV DF_MALCONV_MAX_BYTES=1048576
 ENV DF_MALCONV_VOTE_WEIGHT=1.5
 
+# LightGBM model configuration
 ENV DF_LIGHTGBM_MODEL_PATH=models/LGBM_model.txt
 ENV DF_LIGHTGBM_THRESH=.825
 ENV DF_LIGHTGBM_MAX_BYTES=1048576
 ENV DF_LIGHTGBM_VOTE_WEIGHT=.5
 ENV DF_LIGHTGBM_USE_ENHANCED=false
 
-ENV DF_LIGHTGBM800K_MODEL_PATH=models/LGBM_model800.txt
-
+# StringCNN model configuration
 ENV DF_STRINGCNN_WEIGHTS=models/cnn_strings_best.pt
 ENV DF_STRINGCNN_THRESH=0.5
 ENV DF_STRINGCNN_MAX_BYTES=1048576
 ENV DF_STRINGCNN_VOTE_WEIGHT=0.5
 
-# Expose the API port
+# Expose API port
 EXPOSE 8080
 
 ##########################################
@@ -89,4 +97,3 @@ EXPOSE 8080
 ##########################################
 
 CMD ["/opt/venv/bin/python", "-m", "defender"]
-
