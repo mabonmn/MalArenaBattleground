@@ -23,10 +23,14 @@ RUN pip install --upgrade pip setuptools wheel \
  && pip install --no-cache-dir -r docker-requirements.txt
 
 # Clone EMBER2024 and install it
+# Clone EMBER2024 and install it
 RUN git clone https://github.com/FutureComputing4AI/EMBER2024.git /tmp/EMBER2024 \
     && cd /tmp/EMBER2024 \
+    && pip install --upgrade pip setuptools wheel \
+    && pip install --no-cache-dir "signify>=0.7.1" \
     && pip install --no-cache-dir . \
     && rm -rf /tmp/EMBER2024
+
 
 ##########################################
 # STAGE 2 — RUNTIME IMAGE
@@ -65,3 +69,4 @@ EXPOSE 8080
 
 # Run using the venv Python explicitly
 CMD ["/opt/venv/bin/python", "-m", "defender"]
+
