@@ -25,10 +25,14 @@ RUN pip install --upgrade pip setuptools wheel
 RUN pip install --no-cache-dir -r docker-requirements.txt
 
 # Install EMBER2024 from source automatically
+# Install EMBER2024 correctly
 RUN git clone https://github.com/FutureComputing4AI/EMBER2024.git /tmp/EMBER2024 \
     && cd /tmp/EMBER2024 \
-    && pip install . \
+    && pip install --upgrade pip setuptools wheel \
+    && pip install --no-cache-dir -r requirements.txt \
+    && pip install --no-cache-dir . \
     && rm -rf /tmp/EMBER2024
+
 
 ##########################################
 # STAGE 2 — SMALL RUNTIME IMAGE
@@ -97,3 +101,4 @@ EXPOSE 8080
 ##########################################
 
 CMD ["/opt/venv/bin/python", "-m", "defender"]
+
