@@ -13,6 +13,11 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 # Upgrade pip once
 RUN pip install --upgrade pip setuptools wheel
+# Install EMBER2024
+RUN git clone https://github.com/FutureComputing4AI/EMBER2024.git /tmp/EMBER2024 \
+    && cd /tmp/EMBER2024 \
+    && pip install --no-cache-dir . \
+    && rm -rf /tmp/EMBER2024
 
 # Install everything from your original requirements first
 COPY docker-requirements.txt .
@@ -28,11 +33,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends sed \
     && sed -i 's/from signify.authenticode import SignedPEFile/from signify.authenticode.signed_pe import SignedPEFile/' /opt/venv/lib/python3.11/site-packages/thrember/features.py \
     && rm -rf /var/lib/apt/lists/*
 
-# Install EMBER2024
-RUN git clone https://github.com/FutureComputing4AI/EMBER2024.git /tmp/EMBER2024 \
-    && cd /tmp/EMBER2024 \
-    && pip install --no-cache-dir . \
-    && rm -rf /tmp/EMBER2024
 
 ##########################################
 # STAGE 2 — RUNTIME IMAGE
@@ -59,3 +59,4 @@ ENV PYTHONPATH="/opt/defender"
 EXPOSE 8080
 
 CMD ["/opt/venv/bin/python", "-m", "defender"]
+
