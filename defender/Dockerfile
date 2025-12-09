@@ -88,4 +88,5 @@ EXPOSE 8080
 # RUN DEFENDER
 ##########################################
 
-CMD ["python", "-m", "defender"]
+CMD ["/opt/venv/bin/python", "-m", "defender"]
+
