@@ -6,6 +6,8 @@ numpy
 tqdm
 pefile
 lightgbm>=3.3.0
+signify==0.2.1
 
 # EMBER2024 for LightGBM malware detection
 git+https://github.com/FutureComputing4AI/EMBER2024.git
+
