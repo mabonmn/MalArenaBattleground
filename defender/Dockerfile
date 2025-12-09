@@ -14,11 +14,6 @@ ENV PATH="/opt/venv/bin:$PATH"
 # Upgrade pip
 RUN pip install --upgrade pip setuptools wheel
 
-# Install EMBER2024
-RUN git clone https://github.com/FutureComputing4AI/EMBER2024.git /tmp/EMBER2024 \
-    && cd /tmp/EMBER2024 \
-    && pip install --no-cache-dir . \
-    && rm -rf /tmp/EMBER2024
 
 # Install requirements
 COPY docker-requirements.txt .
@@ -26,6 +21,11 @@ RUN pip install --no-cache-dir -r docker-requirements.txt
 
 # Pin signify 0.7.0
 RUN pip install --no-cache-dir --force-reinstall "signify==0.7.0"
+# Install EMBER2024
+RUN git clone https://github.com/FutureComputing4AI/EMBER2024.git /tmp/EMBER2024 \
+    && cd /tmp/EMBER2024 \
+    && pip install --no-cache-dir . \
+    && rm -rf /tmp/EMBER2024
 
 # ↓↓↓ FIX BROKEN IMPORT (THE ROBUST WAY) ↓↓↓
 # Instead of using sed to guess the line in thrember, we expose SignedPEFile
