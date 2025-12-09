@@ -11,27 +11,27 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Upgrade pip once
+# Upgrade pip
 RUN pip install --upgrade pip setuptools wheel
+
 # Install EMBER2024
 RUN git clone https://github.com/FutureComputing4AI/EMBER2024.git /tmp/EMBER2024 \
     && cd /tmp/EMBER2024 \
     && pip install --no-cache-dir . \
     && rm -rf /tmp/EMBER2024
 
-# Install everything from your original requirements first
+# Install requirements
 COPY docker-requirements.txt .
 RUN pip install --no-cache-dir -r docker-requirements.txt
 
-# Pin signify 0.7.0 (keeps it stable)
+# Pin signify 0.7.0
 RUN pip install --no-cache-dir --force-reinstall "signify==0.7.0"
 
-# ↓↓↓ PATCH THREMBER'S BROKEN IMPORT ↓↓↓
-# Install sed for editing (slim doesn't have it)
-RUN apt-get update && apt-get install -y --no-install-recommends sed \
-    && apt-get clean && rm -rf /var/lib/apt/lists/* \
-    && sed -i 's/from signify.authenticode import SignedPEFile/from signify.authenticode.signed_pe import SignedPEFile/' /opt/venv/lib/python3.11/site-packages/thrember/features.py \
-    && rm -rf /var/lib/apt/lists/*
+# ↓↓↓ FIX BROKEN IMPORT (THE ROBUST WAY) ↓↓↓
+# Instead of using sed to guess the line in thrember, we expose SignedPEFile
+# in signify's __init__.py. This makes signify backward compatible.
+# We use standard shell 'echo' so we don't need to apt-install sed.
+RUN echo "from .signed_pe import SignedPEFile" >> /opt/venv/lib/python3.11/site-packages/signify/authenticode/__init__.py
 
 
 ##########################################
@@ -59,4 +59,3 @@ ENV PYTHONPATH="/opt/defender"
 EXPOSE 8080
 
 CMD ["/opt/venv/bin/python", "-m", "defender"]
-
